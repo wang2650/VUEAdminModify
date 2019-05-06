@@ -1,0 +1,2 @@
+# VUEAdminModify
+vueadmin项目的修改版，主要是改了左侧菜单生成逻辑和路由权限判断的部分
