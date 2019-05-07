@@ -20,7 +20,7 @@ import nestedRouter from './modules/nested'
  * alwaysShow: true               if set true, will always show the root menu
  *                                if not set alwaysShow, when item has more than one children route,
  *                                it will becomes nested mode, otherwise not show the root menu
- * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+ * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
     roles: ['admin','editor']    control the page roles (you can set multiple roles)
@@ -372,20 +372,6 @@ export const asyncRoutes = [
         component: () => import('@/views/clipboard/index'),
         name: 'Clipboardindex',
         meta: { title: 'clipboardDemo', icon: 'clipboard' }
-      }
-    ]
-  },
-
-  {
-    path: '/i18n',
-    component: Layout,
-    name: 'i18n',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/i18n-demo/index'),
-        name: 'I18nindex',
-        meta: { title: 'i18n', icon: 'international' }
       }
     ]
   },
