@@ -3,11 +3,11 @@
     <errorA />
     <errorB />
     <!-- $t is vue-i18n global function to translate lang -->
-    <h3>{{ $t('errorLog.tips') }}</h3>
+    <h3>错误日志提示</h3>
     <code>
-      {{ $t('errorLog.description') }}
+      日志描述
       <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/guide/advanced/error.html">
-        {{ $t('errorLog.documentation') }}
+        日志文档
       </a>
     </code>
     <a href="#">

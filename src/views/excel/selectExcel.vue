@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <!-- $t is vue-i18n global function to translate lang -->
-    <el-input v-model="filename" :placeholder="$t('excel.placeholder')" style="width:350px;" prefix-icon="el-icon-document" />
+    <el-input v-model="filename" placeholder="excel.placeholder" style="width:350px;" prefix-icon="el-icon-document" />
     <el-button :loading="downloadLoading" style="margin-bottom:20px" type="primary" icon="document" @click="handleDownload">
-      {{ $t('excel.selectedExport') }}
+      选择导出
     </el-button>
     <a href="https://panjiachen.github.io/vue-element-admin-site/feature/component/excel.html" target="_blank" style="margin-left:15px;">
       <el-tag type="info">Documentation</el-tag>

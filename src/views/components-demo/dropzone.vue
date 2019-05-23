@@ -2,7 +2,7 @@
   <div class="components-container">
     <code>
       Based on <a class="link-type" href="https://github.com/rowanwins/vue-dropzone"> dropzone </a>.
-      {{ $t('components.dropzoneTips') }}
+      dropzone提示
     </code>
     <div class="editor-container">
       <dropzone id="myVueDropzone" url="https://httpbin.org/post" @dropzone-removedFile="dropzoneR" @dropzone-success="dropzoneS" />

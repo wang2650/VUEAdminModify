@@ -1,8 +1,8 @@
 <template>
   <div class="components-container">
     <code>
-      {{ $t('components.tinymceTips') }}
-      <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/component/rich-editor.html"> {{ $t('components.documentation') }}</a>
+      tinymceTips提示
+      <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/component/rich-editor.html"> 大大大</a>
     </code>
     <div>
       <tinymce v-model="content" :height="300" />

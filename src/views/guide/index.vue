@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <p class="warn-content">
-      {{ $t('guide.description') }}
+      描述
       <a href="https://github.com/kamranahmedse/driver.js" target="_blank">driver.js.
       </a>
     </p>
     <el-button icon="el-icon-question" type="primary" @click.prevent.stop="guide">
-      {{ $t('guide.button') }}
+      按钮
     </el-button>
   </div>
 </template>
