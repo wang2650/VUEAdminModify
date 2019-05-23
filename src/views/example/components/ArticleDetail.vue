@@ -151,10 +151,8 @@ export default {
   computed: {
     contentShortLength() {
       return this.postForm.content_short.length
-    },
-    lang() {
-      return this.$store.getters.language
     }
+
   },
   created() {
     if (this.isEdit) {
