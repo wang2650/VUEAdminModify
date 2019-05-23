@@ -16,7 +16,7 @@ const users = {
     name: 'Super Admin',
     customeroutes: ['/dashboard', '/redirect',
       '/auth-redirect', '/login', '/404', '/401', '', '/documentation',
-      '/guide', '/permission', '/icon', '/example', 'page', 'directive', 'role', '/icon', 'index', 'create', 'edit/:id(\\d+)', 'list'],
+      '/guide', '/permission', '/icon', '/example', 'page', 'directive', 'role', 'index', 'create', 'edit/:id(\\d+)', 'list'],
     userviewpermission: []
   },
   'editor-token': {

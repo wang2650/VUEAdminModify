@@ -72,6 +72,7 @@ router.beforeEach(async(to, from, next) => {
       // in the free login whitelist, go directly
       next()
     } else {
+      console.info('xxx:' + to.path)
       Message.error('没有该页面的权限')
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
