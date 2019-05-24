@@ -1,6 +1,6 @@
 import { asyncRoutes, constantRoutes } from '@/router'
-import store from '..'
-
+// import store from '..'
+import store from '../index'
 export function filterAsyncRoutes(allRoute, canVisitRoute, lastpath) {
   const res = []
   lastpath = lastpath === '' ? '' : lastpath + '/'
@@ -39,10 +39,21 @@ const actions = {
   generateRoutes({ commit }, path) {
     return new Promise(resolve => {
       // 左侧菜单
+      asyncRoutes.forEach(r => {
+        console.info('tmp:' + r.path)
+      }
 
-      const accessedRoutes = filterAsyncRoutes(asyncRoutes, store.getters.customeroutes, '')
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      )
+      const aa = store.getters.customeroutes
+      aa.forEach(bb => {
+        console.info('tmp:' + bb)
+      }
+
+      )
+
+      // const accessedRoutes = filterAsyncRoutes(asyncRoutes, store.getters.customeroutes, '')
+      commit('SET_ROUTES', asyncRoutes)
+      resolve(asyncRoutes)
     })
   }
 }
