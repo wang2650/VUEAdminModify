@@ -111,7 +111,6 @@
 /* eslint-disable */
 'use strict'
 import request from '@/utils/request'
-import language from './utils/language.js'
 import mimes from './utils/mimes.js'
 import data2blob from './utils/data2blob.js'
 import effectRipple from './utils/effectRipple.js'
@@ -211,7 +210,6 @@ export default {
       'png'
     ]
     const tempImgFormat = allowImgFormat.indexOf(imgFormat) === -1 ? 'jpg' : imgFormat
-    const lang = language[langType] ? language[langType] : language['en']
     const mime = mimes[tempImgFormat]
     // 规范图片格式
     that.imgFormat = tempImgFormat

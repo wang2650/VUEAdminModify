@@ -57,11 +57,8 @@ export default {
       hasChange: false,
       hasInit: false,
       tinymceId: this.id,
-      fullscreen: false,
-      languageTypeList: {
-        'en': 'en',
-        'zh': 'zh_CN'
-      }
+      fullscreen: false
+
     }
   },
   computed: {

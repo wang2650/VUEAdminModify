@@ -39,12 +39,8 @@ export default {
       type: String,
       required: false,
       default: '300px'
-    },
-    language: {
-      type: String,
-      required: false,
-      default: 'en_US' // https://github.com/nhnent/tui.editor/tree/master/src/js/langs
     }
+
   },
   data() {
     return {
@@ -56,7 +52,6 @@ export default {
       const options = Object.assign({}, defaultOptions, this.options)
       options.initialEditType = this.mode
       options.height = this.height
-      options.language = this.language
       return options
     }
   },
@@ -65,10 +60,6 @@ export default {
       if (newValue !== preValue && newValue !== this.editor.getValue()) {
         this.editor.setValue(newValue)
       }
-    },
-    language(val) {
-      this.destroyEditor()
-      this.initEditor()
     },
     height(newValue) {
       this.editor.height(newValue)
