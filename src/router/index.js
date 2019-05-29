@@ -1,445 +1,111 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-Vue.use(Router)
+Vue.use(Router);
 
-/* Layout */
-import Layout from '@/layout'
-
-/* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
-
-/**
- * Note: sub-menu only appear when route children.length >= 1
- * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
- *
- * hidden: true                   if set true, item will not show in the sidebar(default is false)
- * alwaysShow: true               if set true, will always show the root menu
- *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
- * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
- * name:'router-name'             the name is used by <keep-alive> (must set!!!)
- * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
-    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
-    icon: 'svg-name'             the icon show in the sidebar
-    noCache: true                if set true, the page will no be cached(default is false)
-    affix: true                  if set true, the tag will affix in the tags-view
-    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
-    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
-  }
- */
-
-/**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
- */
-export const constantRoutes = [
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    name: 'redirect',
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
-      }
+export default new Router({
+    routes: [
+        {
+            path: '/',
+            redirect: '/dashboard'
+        },
+        {
+            path: '/',
+            component: resolve => require(['../components/common/Home.vue'], resolve),
+            meta: { title: '自述文件' },
+            children:[
+                {
+                    path: '/dashboard',
+                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
+                    meta: { title: '系统首页' }
+                },
+                {
+                    path: '/icon',
+                    component: resolve => require(['../components/page/Icon.vue'], resolve),
+                    meta: { title: '自定义图标' }
+                },
+                {
+                    path: '/table',
+                    component: resolve => require(['../components/page/BaseTable.vue'], resolve),
+                    meta: { title: '基础表格' }
+                },
+                {
+                    path: '/tabs',
+                    component: resolve => require(['../components/page/Tabs.vue'], resolve),
+                    meta: { title: 'tab选项卡' }
+                },
+                {
+                    path: '/form',
+                    component: resolve => require(['../components/page/BaseForm.vue'], resolve),
+                    meta: { title: '基本表单' }
+                },
+                {
+                    // 富文本编辑器组件
+                    path: '/editor',
+                    component: resolve => require(['../components/page/VueEditor.vue'], resolve),
+                    meta: { title: '富文本编辑器' }
+                },
+                {
+                    // markdown组件
+                    path: '/markdown',
+                    component: resolve => require(['../components/page/Markdown.vue'], resolve),
+                    meta: { title: 'markdown编辑器' }    
+                },
+                {
+                    // 图片上传组件
+                    path: '/upload',
+                    component: resolve => require(['../components/page/Upload.vue'], resolve),
+                    meta: { title: '文件上传' }   
+                },
+                {
+                    // vue-schart组件
+                    path: '/charts',
+                    component: resolve => require(['../components/page/BaseCharts.vue'], resolve),
+                    meta: { title: 'schart图表' }
+                },
+                {
+                    // 拖拽列表组件
+                    path: '/drag',
+                    component: resolve => require(['../components/page/DragList.vue'], resolve),
+                    meta: { title: '拖拽列表' }
+                },
+                {
+                    // 拖拽Dialog组件
+                    path: '/dialog',
+                    component: resolve => require(['../components/page/DragDialog.vue'], resolve),
+                    meta: { title: '拖拽弹框' }
+                },
+                {
+                    // 国际化组件
+                    path: '/i18n',
+                    component: resolve => require(['../components/page/I18n.vue'], resolve),
+                    meta: { title: '国际化' }
+                },
+                {
+                    // 权限页面
+                    path: '/permission',
+                    component: resolve => require(['../components/page/Permission.vue'], resolve),
+                    meta: { title: '权限测试', permission: true }
+                },
+                {
+                    path: '/404',
+                    component: resolve => require(['../components/page/404.vue'], resolve),
+                    meta: { title: '404' }
+                },
+                {
+                    path: '/403',
+                    component: resolve => require(['../components/page/403.vue'], resolve),
+                    meta: { title: '403' }
+                }
+            ]
+        },
+        {
+            path: '/login',
+            component: resolve => require(['../components/page/Login.vue'], resolve)
+        },
+        {
+            path: '*',
+            redirect: '/404'
+        }
     ]
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/login/index'),
-    hidden: true
-  },
-  {
-    path: '/auth-redirect',
-    name: 'auth-redirect',
-    component: () => import('@/views/login/authRedirect'),
-    hidden: true
-  },
-  {
-    path: '/404',
-    name: 'page404',
-    component: () => import('@/views/errorPage/404'),
-    hidden: true
-  },
-  {
-    path: '/401',
-    name: 'page401',
-    component: () => import('@/views/errorPage/401'),
-    hidden: true
-  },
-  {
-    path: '',
-    name: 'dashboard',
-    component: Layout,
-    redirect: 'dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    name: 'Documentation',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'DocumentationIndex',
-        meta: { title: 'documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    name: 'guide',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'GuideIndex',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
-      }
-    ]
-  }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [{
-  path: '/permission',
-  component: Layout,
-  redirect: '/permission/index',
-  name: 'permission',
-  alwaysShow: true, // will always show the root menu
-  meta: {
-    title: 'permission',
-    icon: 'lock',
-    roles: ['admin', 'editor'] // you can set roles in root nav
-  },
-  children: [{
-    path: 'page',
-    component: () => import('@/views/permission/page'),
-    name: 'PagePermission',
-    meta: {
-      title: 'pagePermission',
-      roles: ['admin'] // or you can only set roles in sub nav
-    }
-  },
-  {
-    path: 'directive',
-    component: () => import('@/views/permission/directive'),
-    name: 'DirectivePermission',
-    meta: {
-      title: 'directivePermission'
-      // if do not set roles, means: this page does not require permission
-    }
-  },
-  {
-    path: 'role',
-    component: () => import('@/views/permission/role'),
-    name: 'RolePermission',
-    meta: {
-      title: 'rolePermission',
-      roles: ['admin']
-    }
-  }
-  ]
-},
-
-{
-  path: '/icon',
-  component: Layout,
-  name: 'icon',
-  children: [{
-    path: 'index',
-    component: () => import('@/views/svg-icons/index'),
-    name: 'Icons',
-    meta: {
-      title: 'icons',
-      icon: 'icon',
-      noCache: true
-    }
-  }]
-},
-
-/** when your routing map is too long, you can split it into small modules **/
-componentsRouter,
-chartsRouter,
-nestedRouter,
-tableRouter,
-
-{
-  path: '/example',
-  component: Layout,
-  redirect: '/example/list',
-  name: 'Example',
-  meta: {
-    title: 'example',
-    icon: 'example'
-  },
-  children: [{
-    path: 'create',
-    component: () => import('@/views/example/create'),
-    name: 'CreateArticle',
-    meta: {
-      title: 'createArticle',
-      icon: 'edit'
-    }
-  },
-  {
-    path: 'edit/:id(\\d+)',
-    component: () => import('@/views/example/edit'),
-    name: 'EditArticle',
-    meta: {
-      title: 'editArticle',
-      noCache: true,
-      activeMenu: '/example/list'
-    },
-    hidden: true
-  },
-  {
-    path: 'list',
-    component: () => import('@/views/example/list'),
-    name: 'ArticleList',
-    meta: {
-      title: 'articleList',
-      icon: 'list'
-    }
-  }
-  ]
-},
-
-{
-  path: '/tab',
-  component: Layout,
-  name: 'Documentation',
-  children: [{
-    path: 'index',
-    component: () => import('@/views/tab/index'),
-    name: 'Tab',
-    meta: {
-      title: 'tab',
-      icon: 'tab'
-    }
-  }]
-},
-
-{
-  path: '/error',
-  component: Layout,
-  redirect: 'noredirect',
-  name: 'ErrorPages',
-  meta: {
-    title: 'errorPages',
-    icon: '404'
-  },
-  children: [{
-    path: '401',
-    component: () => import('@/views/errorPage/401'),
-    name: 'Page401',
-    meta: {
-      title: 'page401',
-      noCache: true
-    }
-  },
-  {
-    path: '404',
-    component: () => import('@/views/errorPage/404'),
-    name: 'Page404',
-    meta: {
-      title: 'page404',
-      noCache: true
-    }
-  }
-  ]
-},
-
-{
-  path: '/error-log',
-  component: Layout,
-  name: 'error-log',
-  redirect: 'noredirect',
-  children: [{
-    path: 'log',
-    component: () => import('@/views/errorLog/index'),
-    name: 'ErrorLogIndex',
-    meta: {
-      title: 'errorLog',
-      icon: 'bug'
-    }
-  }]
-},
-
-{
-  path: '/excel',
-  component: Layout,
-  redirect: '/excel/export-excel',
-  name: 'Excel',
-  meta: {
-    title: 'excel',
-    icon: 'excel'
-  },
-  children: [{
-    path: 'export-excel',
-    component: () => import('@/views/excel/exportExcel'),
-    name: 'ExportExcel',
-    meta: {
-      title: 'exportExcel'
-    }
-  },
-  {
-    path: 'export-selected-excel',
-    component: () => import('@/views/excel/selectExcel'),
-    name: 'SelectExcel',
-    meta: {
-      title: 'selectExcel'
-    }
-  },
-  {
-    path: 'export-merge-header',
-    component: () => import('@/views/excel/mergeHeader'),
-    name: 'MergeHeader',
-    meta: {
-      title: 'mergeHeader'
-    }
-  },
-  {
-    path: 'upload-excel',
-    component: () => import('@/views/excel/uploadExcel'),
-    name: 'UploadExcel',
-    meta: {
-      title: 'uploadExcel'
-    }
-  }
-  ]
-},
-
-{
-  path: '/zip',
-  component: Layout,
-  redirect: '/zip/download',
-  name: 'zip',
-  alwaysShow: true,
-  meta: {
-    title: 'zip',
-    icon: 'zip'
-  },
-  children: [{
-    path: 'downloadzip',
-    component: () => import('@/views/zip/index'),
-    name: 'downloadzip',
-    meta: {
-      title: 'exportZip'
-    }
-  }]
-},
-
-{
-  path: '/pdf',
-  component: Layout,
-  redirect: '/pdf/index',
-  name: 'pdf',
-  children: [{
-    path: 'index',
-    component: () => import('@/views/pdf/index'),
-    name: 'PDFindex',
-    meta: {
-      title: 'pdf',
-      icon: 'pdf'
-    }
-  }]
-},
-{
-  path: '/pdf/download',
-  name: 'pdfdownload',
-  component: () => import('@/views/pdf/download'),
-  hidden: true
-},
-
-{
-  path: '/theme',
-  component: Layout,
-  redirect: 'noredirect',
-  name: 'theme',
-  children: [{
-    path: 'index',
-    component: () => import('@/views/theme/index'),
-    name: 'Themeindex',
-    meta: {
-      title: 'theme',
-      icon: 'theme'
-    }
-  }]
-},
-
-{
-  path: '/clipboard',
-  component: Layout,
-  redirect: 'noredirect',
-  name: 'clipboard',
-  children: [{
-    path: 'index',
-    component: () => import('@/views/clipboard/index'),
-    name: 'Clipboardindex',
-    meta: {
-      title: 'clipboardDemo',
-      icon: 'clipboard'
-    }
-  }]
-},
-
-{
-  path: 'external-link',
-  component: Layout,
-  name: 'external-link',
-  children: [{
-    path: 'https://github.com/PanJiaChen/vue-element-admin',
-    meta: {
-      title: 'externalLink',
-      icon: 'link'
-    }
-  }]
-},
-
-{
-  path: '*',
-  redirect: '/404',
-  name: 'redirect404',
-  hidden: true
-}
-]
-
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({
-    y: 0
-  }),
-  routes: constantRoutes
 })
-
-const router = createRouter()
-
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
-}
-
-export default router
