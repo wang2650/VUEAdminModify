@@ -18,7 +18,8 @@ const state = {
  
     username:'',
     sidebarMenu:[],
-    canVisitroute:[]
+    canVisitroute:[],
+    token:''
 
 }
 

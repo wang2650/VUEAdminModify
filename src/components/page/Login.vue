@@ -23,7 +23,8 @@
 </template>
 
 <script>
-    import store from '@/store'
+    import Vuex from 'vuex'
+    import storestate from '@/store/index'
     import {login} from '@/api/user'
     export default {
         data: function(){
@@ -49,9 +50,9 @@
 
                         var mm=login(this.ruleForm)
                         console.info ('mm:'+mm)
-                       // localStorage.setItem('ms_username',this.ruleForm.username);
-                          store.actions.settoken(this.ruleForm.username)
-          
+                        localStorage.setItem('ms_username',this.ruleForm.username);
+                        
+            
                         this.$router.push('/');
                     } else {
                         console.log('error submit!!');
