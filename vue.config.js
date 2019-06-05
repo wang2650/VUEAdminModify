@@ -8,9 +8,8 @@ function resolve(dir) {
 
 
 module.exports = {
-    publicPath: '/',
+    publicPath: './',
     outputDir: 'dist',
-    baseUrl: './',
     productionSourceMap: false,
     lintOnSave: process.env.NODE_ENV === 'development',
     devServer: {
@@ -21,7 +20,7 @@ module.exports = {
         },
         proxy: {
             '/api':{
-                target:'http://jsonplaceholder.typicode.com',
+                target:process.env.NODE_ENV === 'development'?'http://jsonplaceholder.typicode.com/':'http://www.baidu.com/',
                 changeOrigin:true,
                 pathRewrite:{
                     '/api':''

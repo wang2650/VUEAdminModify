@@ -23,6 +23,8 @@
 </template>
 
 <script>
+    import store from '@/store'
+    import {login} from '@/api/user'
     export default {
         data: function(){
             return {
@@ -44,7 +46,12 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
+
+                        var mm=login(this.ruleForm)
+                        console.info ('mm:'+mm)
+                       // localStorage.setItem('ms_username',this.ruleForm.username);
+                          store.actions.settoken(this.ruleForm.username)
+          
                         this.$router.push('/');
                     } else {
                         console.log('error submit!!');
