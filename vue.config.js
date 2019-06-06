@@ -10,27 +10,19 @@ function resolve(dir) {
 module.exports = {
     publicPath: './',
     outputDir: 'dist',
+    indexPath: '#/login',
     productionSourceMap: false,
     lintOnSave: process.env.NODE_ENV === 'development',
     devServer: {
+        port: 8889,
+        host:'127.0.0.1',
         open: true,
         overlay: {
           warnings: false,
           errors: true
         },
-        proxy: {
-            '/api':{
-                target:process.env.NODE_ENV === 'development'?'http://jsonplaceholder.typicode.com/':'http://www.baidu.com/',
-                changeOrigin:true,
-                pathRewrite:{
-                    '/api':''
-                }
-            },
-            '/ms':{
-                target: 'https://www.easy-mock.com/mock/592501a391470c0ac1fab128',
-                changeOrigin: true
-            }
-        }
+        proxy:'http://localhost:5000/'
+        
     },
     configureWebpack: {
         resolve: {

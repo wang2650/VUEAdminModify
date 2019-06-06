@@ -1,9 +1,8 @@
  import service from '@/api/request'
- export function login(data) {
-     console.info('data:'+data)
+ export function login(dataValue) {
     return service({
-      url: '/api/user/login',
+      url: '/api/SystemManage/User/Login',
       method: 'post',
-      data
+      data:dataValue
     })
   }
