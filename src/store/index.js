@@ -3,27 +3,14 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-const modulesFiles = require.context('./modules', false, /\.js$/)
-
-// you do not need `import app from './modules/app'`
-// it will auto require all vuex module from modules file
-const modules = modulesFiles.keys().reduce((modules, modulePath) => {
-  // set './app.js' => 'app'
-  const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1')
-  const value = modulesFiles(modulePath)
-  modules[moduleName] = value.default
-  return modules
-}, {})
-const state = {
- 
+const store = new Vuex.Store({
+  state: {
     username:'',
     sidebarMenu:[],
     canVisitroute:[],
-    token:''
-
-}
-
-const getters = {
+    token:'aaaaaaa'
+  },
+  getters: {
     //用户名
     username: state => state.username,
     // 左侧菜单
@@ -32,11 +19,8 @@ const getters = {
     canVisitroute:state=>state.canVisitroute,
     //token
     token:state=>state.token
-
-}
-
-
-const mutations = {
+  },
+  mutations: {
     setusername: (state, username) => {
       state.username=username
     },
@@ -50,34 +34,24 @@ const mutations = {
       settoken:(state, token) => {
         state.token=token
       }
-    
-
-  }
-
-  const actions = {
+  },
+  actions: {
     setusername({ commit }, username) {
       commit('setusername', username)
     },
     setsidebarMenu({ commit }, sidebarMenu) {
-        commit('setsidebarMenu', sidebarMenu)
+      commit('setsidebarMenu', sidebarMenu)
     },
     setcanVisitroute({ commit }, canVisitroute) {
-        commit('setcanVisitroute', canVisitroute)
+     commit('setcanVisitroute', canVisitroute)
     }
     ,
     settoken({ commit }, token) {
-        commit('settoken', token)
+      commit('settoken', token)
     }
-
   }
 
+});
 
-const store = new Vuex.Store({
-  modules,
-  state,
-  getters,
-  mutations,
-  actions
-})
 
 export default store

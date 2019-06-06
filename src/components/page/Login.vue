@@ -24,7 +24,7 @@
 
 <script>
     import Vuex from 'vuex'
-    import storestate from '@/store/index'
+    import store from '@/store/index'
     import {login} from '@/api/user'
     export default {
         data: function(){
@@ -49,10 +49,11 @@
                     if (valid) {
 
                         var mm=login(this.ruleForm)
-                        console.info ('mm:'+mm)
+                        store.commit('setusername',this.ruleForm.username);
+           
                         localStorage.setItem('ms_username',this.ruleForm.username);
+                        console.info('token' + store.getters.token)
                         
-            
                         this.$router.push('/');
                     } else {
                         console.log('error submit!!');
