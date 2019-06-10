@@ -48,10 +48,14 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
 
-                        var mm=login(this.ruleForm);
+                        login(this.ruleForm).then(function (response) {
+                               console.log(response);
+                         })
+                        .catch(function (error) {
+                                   console.log(error);
+                         });
                         store.commit('setusername',this.ruleForm.username);
-           
-                        localStorage.setItem('ms_username',this.ruleForm.username);
+                     
                         console.info('token' + store.getters.token)
                         
                         this.$router.push('/');
