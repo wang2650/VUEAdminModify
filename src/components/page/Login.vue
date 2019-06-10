@@ -30,8 +30,8 @@
         data: function(){
             return {
                 ruleForm: {
-                    UserName: 'admin',
-                    PassWord: '123123'
+                    UserName: 'administrator',
+                    PassWord: '12345678'
                 },
                 rules: {
                     UserName: [
@@ -47,18 +47,22 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                           
+                         login(this.ruleForm).then(function (response) {
+                                  console.log('data:'+this.ruleForm.UserName);
+                              if(response.Code===0){
+                              store.commit('setusername',this.$refs.UserName);
+                              store.commit('settoken',response.Data);
+                              this.$router.push('/');
+                              }
+                       
+                               console.log('response:'+response);
 
-                        login(this.ruleForm).then(function (response) {
-                               console.log(response);
                          })
                         .catch(function (error) {
                                    console.log(error);
                          });
-                        store.commit('setusername',this.ruleForm.username);
-                     
-                        console.info('token' + store.getters.token)
                         
-                        this.$router.push('/');
                     } else {
                         console.log('error submit!!');
                         return false;
