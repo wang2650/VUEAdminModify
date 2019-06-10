@@ -8,9 +8,11 @@ function resolve(dir) {
 
 
 module.exports = {
+    assetsDir: 'assets', // 静态资源目录 (js, css, img, fonts)
+    // indexPath : 'index.html',
     publicPath: './',
     outputDir: 'dist',
-    indexPath: '#/login',
+    // indexPath: '#/login',
     productionSourceMap: false,
     lintOnSave: process.env.NODE_ENV === 'development',
     devServer: {
@@ -42,7 +44,7 @@ module.exports = {
           args[0].cdn = cdn
           return args
         })
-
+        
         config.module
         .rule('svg')
         .exclude.add(resolve('src/icons'))

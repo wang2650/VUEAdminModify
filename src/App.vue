@@ -3,6 +3,20 @@
         <router-view></router-view>
     </div>
 </template>
+<script>
+import Vue from 'vue'
+import VueHead from 'vue-head'
+export default {
+ head: {
+ link: [
+     { rel: 'icon', href: 'favicon.ico' }
+ ]
+ }
+
+
+}
+
+</script>
 <style>
     @import "./assets/css/main.css";
     @import "./assets/css/color-dark.css";     /*深色主题*/

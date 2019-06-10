@@ -73,9 +73,28 @@ service.interceptors.response.use(
       }
     },
     error => {
-      console.log('err' + error) // for debug
+      
+      let errormessage=error.message
+      switch (error.response.status) {
+        case 401:
+            errormessage='weiapi没有访问权限'
+          break;
+          case 404:
+              errormessage='weiapi地址没有'
+            break;
+          case 500:
+              errormessage='weiapi服务器错误'
+            break;
+            default:
+              break;
+
+    }
+
+
+
+      console.log('err' + errormessage) // for debug
       Message({
-        message: error.message,
+        message: errormessage,
         type: 'error',
         duration: 5 * 1000
       })
