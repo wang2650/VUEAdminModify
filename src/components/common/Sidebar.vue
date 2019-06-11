@@ -154,14 +154,13 @@ export default {
   },
   created() {
 
-  console.info(store.getters.sidebarMenu.length)
     if (store.getters.sidebarMenu && store.getters.sidebarMenu.length > 0) {
       this.items = store.getters.sidebarMenu;
     } else {
       GetMenuTreeForCurrentUser()
         .then(function(response) {
           if (response.Code === 0) {
-            store.commit("setsidebarMenu", response.Data);
+            store.commit("setsidebarMenu", response.Data.result);
             this.items = store.getters.sidebarMenu;
           }
         })

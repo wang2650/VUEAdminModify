@@ -15,3 +15,15 @@ export function GetMenuByUser(userId) {
       data:''
     })
   }
+
+//获取当前用户可访问的地址
+export function GetUrlRightForCurrentUser() {
+  return service({
+    url: '/Api/SystemManage/Menu/GetUrlRightForCurrentUser',
+    method: 'get',
+    data:''
+  })
+}
+
+
+  
