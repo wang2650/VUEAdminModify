@@ -8,7 +8,7 @@ const store = new Vuex.Store({
     username:'',
     sidebarMenu:[],
     canVisitroute:[],
-    token:'aaaaaaa'
+    token:''
   },
   getters: {
     //用户名
