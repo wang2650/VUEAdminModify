@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
                     }
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    Message.error('获取用户可访问地址方法错误')
                   });
               }
 

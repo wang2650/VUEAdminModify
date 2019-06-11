@@ -70,6 +70,9 @@ export default {
     }
   }
 };
+$(function () {
+  alert('引入成功')
+})
 </script>
 
 <style scoped>
