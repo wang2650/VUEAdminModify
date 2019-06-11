@@ -3,29 +3,30 @@ import Vuex from "vuex";
 import App from './App.vue'
 import router from './router'
 import store from '@/store/index'
-import axios from 'axios';
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
+import axios from 'axios';
+Vue.prototype.$axios = axios;
+import { MessageBox, Message } from 'element-ui'
 import { messages } from './components/common/i18n';
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import './assets/css/icon.css';
 import './components/common/directives';
 import "babel-polyfill";
-import { GetUrlRightForCurrentUser } from "@/api/menu";
-import { MessageBox, Message } from 'element-ui'
 Vue.config.productionTip = false
 Vue.use(VueI18n);
 Vue.use(ElementUI, {
     size: 'small'
 });
-Vue.prototype.$axios = axios;
-
+import moment from 'moment'
+Vue.prototype.momentplug = moment
 const i18n = new VueI18n({
     locale: 'zh',
     messages
 })
 
+import { GetUrlRightForCurrentUser } from "@/api/menu";
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     // document.title = to.meta.title;
