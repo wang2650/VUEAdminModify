@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from "vuex";
 import App from './App.vue'
 import router from './router'
-import store from '@/store/index'
+import storage from "@/api/storage";
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
 import axios from 'axios';
@@ -31,11 +31,15 @@ import { GetUrlRightForCurrentUser } from "@/api/menu";
 router.beforeEach((to, from, next) => {
     // document.title = to.meta.title;
     const whileList=['/login','/help','contact']
-    const token = store.getters.token;
+
+    const token =  storage.getValue("token");
+
     if (whileList.indexOf(to.path)>=0) {
+ 
         next();
     }
     else if (!token) {
+
         next('/login');
     }
     else {
@@ -45,21 +49,22 @@ router.beforeEach((to, from, next) => {
                 confirmButtonText: '确定'
             });
         } else {
+    
              let canVisitroute=[]
-            if (store.getters.canVisitroute && store.getters.canVisitroute.length > 0) {
-                canVisitroute = store.getters.canVisitroute;
-              } else {
-                GetUrlRightForCurrentUser()
-                  .then(function(response) {
-                    if (response.Code === 0) {
-                      store.commit("setcanVisitroute", response.Data.result);
-                      canVisitroute= store.getters.canVisitroute;
-                    }
-                  })
-                  .catch(function(error) {
-                    Message.error('获取用户可访问地址方法错误')
-                  });
-              }
+            // if ( storage.getValue('canVisitroute')) {
+            //     canVisitroute = JSON.parse(storage.getValue('canVisitroute'));
+            //   } else {
+            //     GetUrlRightForCurrentUser()
+            //       .then(function(response) {
+            //         if (response.Code === 0) {
+            //           storage.set('canVisitroute',JSON.stringify(response.Data.Result) )
+            //           canVisitroute= response.Data.Result;
+            //         }
+            //       })
+            //       .catch(function(error) {
+            //         Message.error('获取用户可访问地址方法错误')
+            //       });
+            //   }
 
                if(canVisitroute.indexOf(to.path)>=0){
                 next();

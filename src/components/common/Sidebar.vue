@@ -45,8 +45,8 @@
 import bus from "../common/bus";
 import { GetMenuTreeForCurrentUser } from "@/api/menu";
 import Vuex from "vuex";
-import store from "@/store/index";
-
+import {  Message } from 'element-ui'
+import storage from "@/api/storage";
 export default {
   data() {
     return {
@@ -154,19 +154,26 @@ export default {
   },
   created() {
 
-    if (store.getters.sidebarMenu && store.getters.sidebarMenu.length > 0) {
-      this.items = store.getters.sidebarMenu;
+    if (storage.getValue('sidebarMenu')) {
+      this.items = JSON.parse(storage.getValue('sidebarMenu'))
     } else {
-      GetMenuTreeForCurrentUser()
+      let result=  GetMenuTreeForCurrentUser()
         .then(function(response) {
-          if (response.Code === 0) {
-            store.commit("setsidebarMenu", response.Data.result);
-            this.items = store.getters.sidebarMenu;
-          }
+          storage.set('sidebarMenu',JSON.stringify(response.Data.Result)) 
+           return response; 
         })
         .catch(function(error) {
           console.log(error);
         });
+        
+          if (result.Code === 0) {
+              storage.set('sidebarMenu',JSON.stringify(result.Data.Result)) 
+            this.items = result.Data.Result;
+          }
+          else{
+             Message.error('获取左侧菜单失败');
+          }
+         
     }
 
 

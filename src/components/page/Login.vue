@@ -29,7 +29,7 @@
 
 <script>
 import Vuex from "vuex";
-import store from "@/store/index";
+import storage from "@/api/storage";
 import { login } from "@/api/user";
 import routes from '@/router/index';
 export default {
@@ -49,13 +49,15 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      store.commit("setusername", this.ruleForm.UserName);
+
+      storage.set("username", this.ruleForm.UserName);
       this.$refs[formName].validate(valid => {
         if (valid) {
           login(this.ruleForm)
             .then(function(response) {
               if (response.Code === 0) {
-                store.commit("settoken", response.Data);
+                storage.set("token", response.Data);
+                console.info('考考')
                 routes.push("/");
               }
             })
@@ -71,7 +73,8 @@ export default {
   }
 };
 $(function () {
-  alert('引入成功')
+       storage.clear()
+  // alert('引入成功')
 })
 </script>
 

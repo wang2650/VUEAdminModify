@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
+import storage from "@/api/storage";
 
 // create an axios instance
 const service = axios.create({
@@ -14,11 +14,11 @@ service.interceptors.request.use(
     config => {
       // do something before request is sent
   
-      if (store.getters.token) {
+      if (storage.getValue('token')) {
         // let each request carry token
         // ['X-Token'] is a custom headers key
         // please modify it according to the actual situation
-        config.headers['Authorization'] = store.getters.token
+        config.headers['Authorization'] =storage.getValue('token')
       }
       return config
     },
@@ -75,7 +75,7 @@ service.interceptors.response.use(
     error => {
       
       let errormessage=error.message
-      switch (error.response.status) {
+      switch (error.status) {
         case 401:
             errormessage='weiapi没有访问权限'
           break;
