@@ -31,7 +31,8 @@
 import Vuex from "vuex";
 import storage from "@/api/storage";
 import { login } from "@/api/user";
-import routes from '@/router/index';
+import routes from "@/router/index";
+import { GetMenuTreeForCurrentUser } from "@/api/menu";
 export default {
   data: function() {
     return {
@@ -49,7 +50,6 @@ export default {
   },
   methods: {
     submitForm(formName) {
-
       storage.set("username", this.ruleForm.UserName);
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -57,8 +57,17 @@ export default {
             .then(function(response) {
               if (response.Code === 0) {
                 storage.set("token", response.Data);
-                console.info('考考')
-                routes.push("/");
+
+              let result=  GetMenuTreeForCurrentUser()
+                  .then(function(response) {
+                    storage.set(
+                      "sidebarMenu",
+                      JSON.stringify(response.Data.Result)
+                    );
+                       routes.push("/");
+                  })
+                  .catch(function(error) {});
+
               }
             })
             .catch(function(error) {
@@ -72,10 +81,10 @@ export default {
     }
   }
 };
-$(function () {
-       storage.clear()
+$(function() {
+  storage.clear();
   // alert('引入成功')
-})
+});
 </script>
 
 <style scoped>

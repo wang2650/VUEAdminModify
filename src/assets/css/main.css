@@ -171,3 +171,35 @@ a {
 .v-note-wrapper .v-note-panel {
     min-height: 500px;
 }
+
+.width100{
+    width:100px;
+}
+
+.width200{
+    width:200px;
+}
+.width300{
+    width:300px;
+}
+.width400{
+    width:400px;
+}
+.width500{
+    width:500px;
+}
+.width600{
+    width:600px;
+}
+.width700{
+    width:700px;
+}
+.width800{
+    width:800px;
+}
+.width900{
+    width:900px;
+}
+.width1000{
+    width:1000px;
+}

@@ -144,39 +144,19 @@ export default {
       ]
     };
   },
-  mounted() {
-    
+  methods:{
+       SetMenu(){
+         this.items = JSON.parse(storage.getValue('sidebarMenu'))
+   
+       }
   },
   computed: {
     onRoutes() {
       return this.$route.path.replace("/", "");
     }
   },
-  created() {
-
-    if (storage.getValue('sidebarMenu')) {
-      this.items = JSON.parse(storage.getValue('sidebarMenu'))
-    } else {
-      let result=  GetMenuTreeForCurrentUser()
-        .then(function(response) {
-          storage.set('sidebarMenu',JSON.stringify(response.Data.Result)) 
-           return response; 
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-        
-          if (result.Code === 0) {
-              storage.set('sidebarMenu',JSON.stringify(result.Data.Result)) 
-            this.items = result.Data.Result;
-          }
-          else{
-             Message.error('获取左侧菜单失败');
-          }
-         
-    }
-
-
+  mounted() {
+     this.SetMenu();
     // 通过 Event Bus 进行组件间通信，来折叠侧边栏
     bus.$on("collapse", msg => {
       this.collapse = msg;

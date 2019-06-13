@@ -25,6 +25,7 @@
     >
       <el-table-column type="selection" width="50"></el-table-column>
       <el-table-column type="index" width="80"></el-table-column>
+      <el-table-column prop="ID" width="80" label="用户ID"></el-table-column>
       <el-table-column prop="NickName" label="昵称" width sortable></el-table-column>
       <el-table-column prop="UserName" label="登录名" width sortable></el-table-column>
       <el-table-column label="操作" width="150">
@@ -41,7 +42,7 @@
       <el-pagination
         layout="prev, pager, next"
         @current-change="handleCurrentChange"
-        :page-size="50"
+        :page-size="10"
         :total="total"
         style="float:right;"
       ></el-pagination>
@@ -56,13 +57,13 @@
     >
       <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
         <el-form-item label="昵称" prop="NickName">
-          <el-input v-model="editForm.uRealName" auto-complete="off"></el-input>
+          <el-input v-model="editForm.NickName" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="登录名" prop="UserName">
-          <el-input v-model="editForm.uLoginName" auto-complete="off"></el-input>
+          <el-input v-model="editForm.UserName" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="PassWord">
-          <el-input v-model="addForm.uLoginPWD" auto-complete="off"></el-input>
+          <el-input v-model="editForm.PassWord" auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="介绍">
@@ -82,15 +83,15 @@
       v-model="addFormVisible"
       :close-on-click-modal="false"
     >
-      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm" size="mini">
         <el-form-item label="昵称" prop="NickName">
-          <el-input v-model="addForm.NickName" auto-complete="off"></el-input>
+          <el-input v-model="addForm.NickName" auto-complete="off" class="width200"></el-input>
         </el-form-item>
         <el-form-item label="登录名" prop="UserName">
-          <el-input v-model="addForm.UserName" auto-complete="off"></el-input>
+          <el-input v-model="addForm.UserName" auto-complete="off" class="width200"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="PassWord">
-          <el-input v-model="addForm.PassWord" auto-complete="off"></el-input>
+          <el-input v-model="addForm.PassWord" auto-complete="off" class="width200"></el-input>
         </el-form-item>
         <el-form-item label="介绍">
           <el-input type="textarea" v-model="addForm.Introduction"></el-input>
@@ -98,14 +99,20 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="addFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+        <el-button type="primary" @click.native.prevent="addSubmit" :loading="addLoading">提交</el-button>
       </div>
     </el-dialog>
   </section>
 </template>
 
 <script>
-import { GetUserList, InsertUser, DeleteUser,BatchRemoveUser, UpdateUsers } from "@/api/user";
+import {
+  GetUserList,
+  InsertUser,
+  DeleteUser,
+  BatchRemoveUser,
+  UpdateUsers
+} from "@/api/user";
 export default {
   data() {
     return {
@@ -133,6 +140,7 @@ export default {
         id: 0,
         UserName: "",
         NickName: "",
+        PassWord: "",
         Introduction: ""
       },
 
@@ -177,7 +185,6 @@ export default {
             type: "warning"
           });
         }
-
       });
     },
     //删除
@@ -190,7 +197,6 @@ export default {
           //NProgress.start();
           let para = { id: row.ID };
           DeleteUser(para).then(res => {
-    
             this.listLoading = false;
             //NProgress.done();
             if (res.Code === 0) {
@@ -200,7 +206,7 @@ export default {
               });
             } else {
               this.$message({
-                message: res.Errors.join('  '),
+                message: res.Errors.join("  "),
                 type: "error"
               });
             }
@@ -235,20 +241,20 @@ export default {
             let para = Object.assign({}, this.editForm);
 
             UpdateUsers(para).then(res => {
-                    this.editLoading = false;
+              this.editLoading = false;
               if (res.Code === 0) {
-              
                 //NProgress.done();
                 this.$message({
-                  message: '操作成功',
+                  message: "操作成功",
                   type: "success"
                 });
                 this.$refs["editForm"].resetFields();
                 this.editFormVisible = false;
                 this.getUsers();
               } else {
+                  this.editLoading = false;
                 this.$message({
-                  message:res.Errors.join('  '),
+                  message: res.Errors.join("  "),
                   type: "error"
                 });
               }
@@ -265,25 +271,31 @@ export default {
             this.addLoading = true;
             //NProgress.start();
             let para = Object.assign({}, this.addForm);
-            InsertUser(para).then(res => {
+            InsertUser(para)
+              .then(res => {
                 this.addLoading = false;
-              if (res.Code === 0) {
-    
-                this.$message({
-                  message: '操作成功',
-                  type: "success"
-                });
-                this.$refs["addForm"].resetFields();
-                this.addFormVisible = false;
-                this.getUsers();
-              } else {
-                this.$message({
-                  message: res.Errors.join('  '),
-                  type: "error"
-                });
-              }
-            });
+                if (res.Code === 0) {
+                  this.$message({
+                    message: "操作成功",
+                    type: "success"
+                  });
+                  this.$refs["addForm"].resetFields();
+                  this.addFormVisible = false;
+                  this.getUsers();
+                } else {
+                  this.$message({
+                    message: res.Errors.join("  "),
+                    type: "error"
+                  });
+                }
+              })
+              .catch(error => {
+                this.addLoading = false;
+                console.log(error);
+              });
           });
+        } else {
+          return false;
         }
       });
     },
@@ -292,7 +304,6 @@ export default {
     },
     //批量删除
     batchRemove: function() {
-
       var ids = this.sels.map(item => item.ID).toString();
       this.$confirm("确认删除选中记录吗？", "提示", {
         type: "warning"
