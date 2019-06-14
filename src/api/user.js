@@ -1,4 +1,5 @@
  import service from '@/api/request'
+ import utils from '@/api/utils'
  //登录
  export function login(dataValue) {
     return service({
@@ -28,10 +29,9 @@
 ///删除
   export function DeleteUser(dataValue) {
     return service({
-      url: '/api/SystemManage/User/DeleteUser',
+      url: '/api/SystemManage/User/DeleteUser'+utils.queryParams(dataValue),
       method: 'get',
-      data:dataValue,
-      headers:{"contentType":"application/json"}
+      // headers:{"contentType":"application/json"}
     })
   }
 // 批量删除

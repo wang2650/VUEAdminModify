@@ -195,7 +195,7 @@ export default {
         .then(() => {
           this.listLoading = true;
           //NProgress.start();
-          let para = { id: row.ID };
+          let para = { userId: row.ID };
           DeleteUser(para).then(res => {
             this.listLoading = false;
             //NProgress.done();
