@@ -20,6 +20,11 @@ export default new Router({
                     meta: { title: '用户管理' }
                 },
                 {
+                    path: '/rolemanage',
+                    component: resolve => require(['../components/page/role/rolemanage.vue'], resolve),
+                    meta: { title: '角色管理' }
+                },
+                {
                     path: '/dashboard',
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }
