@@ -5,7 +5,10 @@
 </template>
 <script>
 import Vue from 'vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import VueHead from 'vue-head'
+Vue.prototype.NProgress = NProgress
 export default {
  head: {
  link: [

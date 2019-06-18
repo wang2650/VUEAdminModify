@@ -6,6 +6,8 @@ import storage from "@/api/storage";
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
 import axios from 'axios';
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 Vue.prototype.$axios = axios;
 import { MessageBox, Message } from 'element-ui'
 import { messages } from './components/common/i18n';
@@ -30,6 +32,7 @@ const i18n = new VueI18n({
 import { GetUrlRightForCurrentUser } from "@/api/menu";
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
+    NProgress.start()
     // document.title = to.meta.title;
     const whileList=['/login','/help','contact']
 
@@ -81,7 +84,9 @@ router.beforeEach((to, from, next) => {
         }
     }
 })
-
+router.afterEach(() => {
+    NProgress.done()
+  })
 
 new Vue({
     router,

@@ -1,10 +1,10 @@
 import service from '@/api/request'
 //获取用户的部门
-export function GetDepartmentListByUserId(userId) {
+export function GetDepartmentListByUserId(dataValue) {
    return service({
-     url: '/Api/SystemManage/Department/GetDepartmentListByUserId',
-     method: 'post',
-     data:userId
+     url: '/Api/SystemManage/Department/GetDepartmentListByUserId'+utils.queryParams(dataValue),
+     method: 'get',
+     data:''
    })
  }
 
@@ -18,31 +18,31 @@ export function GetDepartmentListForCurrentUser() {
 
  
 //添加部门
- export function InsertDepartment() {
+ export function InsertDepartment(dataValue) {
     return service({
       url: '/Api/SystemManage/Department/InsertDepartment',
       method: 'post',
-      data:''
+      data:dataValue
     })
   }
 
 //修改部门
-export function UpdateDepartment() {
+export function UpdateDepartment(dataValue) {
   return service({
     url: '/Api/SystemManage/Department/UpdateDepartment',
     method: 'post',
-    data:''
+    data:dataValue
   })
 }
 //删除部门
-export function DeleteDepartmentByDepartmentId() {
+export function DeleteDepartmentByDepartmentId(dataValue) {
     return service({
-      url: '/Api/SystemManage/Department/DeleteDepartmentByDepartmentId',
+      url: '/Api/SystemManage/Department/DeleteDepartmentByDepartmentId'+utils.queryParams(dataValue),
       method: 'get',
       data:''
     })
   }
-  //获取部门列表
+  //获取所有部门列表
 export function GetDepartmentList() {
     return service({
       url: '/Api/SystemManage/Department/GetDepartmentList',
@@ -51,9 +51,9 @@ export function GetDepartmentList() {
     })
   }
   //获取部门的用户
-export function GetUserListByDepartmentId() {
+export function GetUserListByDepartmentId(dataValue) {
     return service({
-      url: '/Api/SystemManage/Department/GetUserListByDepartmentId',
+      url: '/Api/SystemManage/Department/GetUserListByDepartmentId'+utils.queryParams(dataValue),
       method: 'get',
       data:''
     })
@@ -61,10 +61,10 @@ export function GetUserListByDepartmentId() {
 
 
     //修改部门中的用户
-export function ModifyUserForDepartment() {
+export function ModifyUserForDepartment(dataValue) {
     return service({
       url: '/Api/SystemManage/Department/GetUserListByDepartmentId',
       method: 'post',
-      data:''
+      data:dataValue
     })
   }

@@ -6,7 +6,7 @@ import storage from "@/api/storage";
 const service = axios.create({
     baseURL: process.env.baseUrl, // url = base url + request url
     withCredentials: true, // send cookies when cross-domain requests
-    timeout: 10000 // request timeout
+    timeout: 5000 // request timeout
   })
 
   // request interceptor

@@ -168,6 +168,7 @@ export default {
       },
       //编辑界面数据
       editForm: {
+        Id:0,
         RoleName: "",
         Description: "",
         RsState: 1
@@ -255,18 +256,19 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.listLoading = true;
-          //NProgress.start();
-          let para = { RoleId: row.ID };
+         
+          this.NProgress.start();
+          let para = { Id: row.Id };
           DeleteRoleByRoleId(para).then(res => {
-            this.listLoading = false;
-            //NProgress.done();
+        
+            this.NProgress.done();
             if (res.Code === 0) {
               this.$message({
                 message: "删除成功",
                 type: "success"
               });
             } else {
+
               this.$message({
                 message: res.Errors.join("  "),
                 type: "error"
@@ -280,7 +282,6 @@ export default {
     },
     //显示编辑界面
     handleEdit: function(index, row) {
-        this.editForm.RoleId=row.Id;
         this.statelt = statelist();
       this.editFormVisible = true;
       this.editForm = Object.assign({}, row);
@@ -302,22 +303,23 @@ export default {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            this.editLoading = true;
-            //NProgress.start();
+       
+             this.NProgress.start();
 
             let para = Object.assign({}, this.editForm);
             UpdateRole(para).then(res => {
-              this.editLoading = false;
+             
+               this.NProgress.done();
               if (res.Code === 0) {
-                //NProgress.done();
+                this.editFormVisible = false;
                 this.$message({
                   message: "操作成功",
                   type: "success"
                 });
                 this.$refs["editForm"].resetFields();
-                this.editFormVisible = false;
                 this.getroles();
               } else {
+              
                 this.$message({
                   message: res.Errors.join("  "),
                   type: "error"
