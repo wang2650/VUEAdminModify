@@ -1,4 +1,5 @@
 import service from '@/api/request'
+import utils from '@/api/utils'
 //获取用户的部门
 export function GetDepartmentListByUserId(dataValue) {
    return service({
@@ -15,8 +16,14 @@ export function GetDepartmentListForCurrentUser() {
       method: 'get'
     })
   }
-
- 
+  //查找当前用户所在的部门和子部门
+  export function GetDepartmentAndSubDepartmentForCurrentUser() {
+    return service({
+      url: '/Api/SystemManage/Department/GetDepartmentAndSubDepartmentForCurrentUser',
+      method: 'get'
+    })
+  }
+  
 //添加部门
  export function InsertDepartment(dataValue) {
     return service({
@@ -43,11 +50,11 @@ export function DeleteDepartmentByDepartmentId(dataValue) {
     })
   }
   //获取所有部门列表
-export function GetDepartmentList() {
+export function GetDepartmentList(dataValue) {
     return service({
       url: '/Api/SystemManage/Department/GetDepartmentList',
       method: 'post',
-      data:''
+      data:dataValue
     })
   }
   //获取部门的用户
@@ -55,7 +62,7 @@ export function GetUserListByDepartmentId(dataValue) {
     return service({
       url: '/Api/SystemManage/Department/GetUserListByDepartmentId'+utils.queryParams(dataValue),
       method: 'get',
-      data:''
+      data:dataValue
     })
   }
 

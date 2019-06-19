@@ -25,6 +25,11 @@ export default new Router({
                     meta: { title: '角色管理' }
                 },
                 {
+                    path: '/departmentmanage',
+                    component: resolve => require(['../components/page/department/departmentmanage.vue'], resolve),
+                    meta: { title: '部门管理' }
+                },
+                {
                     path: '/dashboard',
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }

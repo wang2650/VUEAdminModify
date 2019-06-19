@@ -4,14 +4,14 @@
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
       <el-form :inline="true" :model="filters" @submit.native.prevent>
         <el-form-item label="部门">
-          <el-select v-model="departmentid" placeholder="请选择部门" @change="departmentSel">
-            <el-option
-              v-for="item in departments"
-              :key="item.Id"
-              :label="item.DepartmentName"
-              :value="item.Id"
-            ></el-option>
-          </el-select>
+     <el-cascader
+    expand-trigger="hover"
+    :show-all-levels="false"
+    change-on-select
+    :options="departmentoptions"
+    v-model="seldepartment"
+    @change="cascaderChange">
+  </el-cascader>
         </el-form-item>
 
         <el-form-item>
@@ -141,7 +141,7 @@ import {
   DeleteRoleByRoleId,
   UpdateRole
 } from "@/api/role";
-import { GetDepartmentListForCurrentUser } from "@/api/department";
+import { GetDepartmentAndSubDepartmentForCurrentUser } from "@/api/department";
 import { statelist,stateText } from "@/api/commonfun";
 
 export default {
@@ -151,7 +151,8 @@ export default {
         name: ""
       },
       statelt: {},
-      departments: [],
+      departmentoptions: [],
+      seldepartment:[],
       departmentid: -1,
       roles: [],
       total: 0,
@@ -196,20 +197,21 @@ export default {
       }
       return "";
     },
-    //获取用户列表
+    //获取部门列表
     getdepartmentlist() {
       let para = {
         Page: { PageIndex: this.page, PageSize: this.pagesize }
       };
       this.listLoading = true;
-      GetDepartmentListForCurrentUser(para).then(res => {
+      GetDepartmentAndSubDepartmentForCurrentUser(para).then(res => {
         this.listLoading = false;
         if (res.Code === 0) {
-          this.departments = res.Data.Result;
+          this.departmentoptions = res.Data;
 
-          if (this.departments.length > 0) {
-            this.departmentid = this.departments[0].Id;
-            this.departmentSel();
+          if (this.departmentoptions.length > 0) {
+            this.departmentid = this.departmentoptions[0].value
+            this.seldepartment=[this.departmentoptions[0].value]
+           this.getroles();
           }
         } else {
           message({
@@ -219,7 +221,10 @@ export default {
         }
       });
     }, 
-    departmentSel() {
+    //选择部门
+    cascaderChange(val) {
+       this.departmentid =val[val.length-1]
+   
       this.getroles();
     },
     getstatetext(val){
