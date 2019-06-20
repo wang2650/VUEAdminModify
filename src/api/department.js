@@ -67,10 +67,18 @@ export function GetUserListByDepartmentId(dataValue) {
   }
 
 
-    //修改部门中的用户
-export function ModifyUserForDepartment(dataValue) {
+    //添加部门中的用户
+export function AddUserForDepartment(dataValue) {
     return service({
-      url: '/Api/SystemManage/Department/GetUserListByDepartmentId',
+      url: '/Api/SystemManage/Department/AddUserForDepartment',
+      method: 'post',
+      data:dataValue
+    })
+  }
+  //移除部门中用户
+  export function DeleteUserForDepartment(dataValue) {
+    return service({
+      url: '/Api/SystemManage/Department/DeleteUserForDepartment',
       method: 'post',
       data:dataValue
     })

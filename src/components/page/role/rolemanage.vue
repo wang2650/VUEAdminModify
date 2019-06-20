@@ -4,14 +4,14 @@
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
       <el-form :inline="true" :model="filters" @submit.native.prevent>
         <el-form-item label="部门">
-     <el-cascader
-    expand-trigger="hover"
-    :show-all-levels="false"
-    change-on-select
-    :options="departmentoptions"
-    v-model="seldepartment"
-    @change="cascaderChange">
-  </el-cascader>
+          <el-cascader
+            expand-trigger="hover"
+            :show-all-levels="false"
+            change-on-select
+            :options="departmentoptions"
+            v-model="seldepartment"
+            @change="cascaderChange"
+          ></el-cascader>
         </el-form-item>
 
         <el-form-item>
@@ -36,13 +36,13 @@
     >
       <el-table-column type="selection" width="50"></el-table-column>
       <el-table-column type="index" width="80"></el-table-column>
-        <el-table-column prop="Id" label="角色Id" width sortable></el-table-column>
-      <el-table-column prop="RoleName" label="角色名" width sortable></el-table-column>
-      <el-table-column prop="Description" label="说明" width sortable></el-table-column>
-      <el-table-column prop="AddDateTime" label="创建时间" :formatter="formatCreateTime" width sortable></el-table-column>
+      <el-table-column prop="Id" label="角色Id" width="80" ></el-table-column>
+      <el-table-column prop="RoleName" label="角色名" width="150" ></el-table-column>
+      <el-table-column prop="Description" label="说明" width="150"></el-table-column>
+      <el-table-column prop="AddDateTime" label="创建时间" width="120" :formatter="formatCreateTime" ></el-table-column>
       <!--<el-table-column prop="CreateBy" label="创建者" width="" sortable>-->
       <!--</el-table-column>-->
-      <el-table-column prop="RsState" label="状态" width="200" sortable>
+      <el-table-column prop="RsState" label="状态" width="100" sortable>
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.RsState===1  ? 'success' : 'danger'"
@@ -50,8 +50,9 @@
           >{{ getstatetext(scope.row.RsState)}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" >
         <template scope="scope">
+          <el-button size="small" @click="handleMenu(scope.$index, scope.row)">设置权限</el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -116,7 +117,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="RsState">
           <el-select v-model="addForm.RsState" placeholder="请选择角色状态">
-          <el-option
+            <el-option
               v-for="item in statelt"
               :key="item.value"
               :label="item.name"
@@ -128,6 +129,32 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="addFormVisible = false">取消</el-button>
         <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+      </div>
+    </el-dialog>
+
+    <!--权限设置界面-->
+    <el-dialog
+      title="设置权限"
+      :visible.sync="menuFormVisible"
+      v-model="menuFormVisible"
+      :close-on-click-modal="false"
+    >
+      <el-form :model="menuForm" label-width="80px"  ref="menuForm">
+        <el-form-item label="权限">
+<el-tree
+  :data="menuForm.allnodes"
+  show-checkbox
+  node-key="id"
+  ref="tree"
+  default-expand-all
+  :default-checked-keys="menuForm.selectednodes"
+  :props="defaultProps">
+</el-tree>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="menuFormVisible = false">取消</el-button>
+        <el-button type="primary" @click.native="menusubmit" :loading="menuLoading">提交</el-button>
       </div>
     </el-dialog>
   </section>
@@ -142,8 +169,8 @@ import {
   UpdateRole
 } from "@/api/role";
 import { GetDepartmentAndSubDepartmentForCurrentUser } from "@/api/department";
-import { statelist,stateText } from "@/api/commonfun";
-
+import { statelist, stateText } from "@/api/commonfun";
+import { GetMenuTreeForCurrentUserByDeparentId ,ModifyMentForRole} from "@/api/menu";
 export default {
   data() {
     return {
@@ -152,7 +179,7 @@ export default {
       },
       statelt: {},
       departmentoptions: [],
-      seldepartment:[],
+      seldepartment: [],
       departmentid: -1,
       roles: [],
       total: 0,
@@ -169,7 +196,7 @@ export default {
       },
       //编辑界面数据
       editForm: {
-        Id:0,
+        Id: 0,
         RoleName: "",
         Description: "",
         RsState: 1
@@ -184,9 +211,20 @@ export default {
       addForm: {
         RoleName: "",
         Description: "",
-        RsState: '',
-        DepartmentId:-1
-      }
+        RsState: "",
+        DepartmentId: -1
+      },
+      modifyRoleId:0,
+      menuLoading:false,
+       menuFormVisible:false, //权限对话框
+       menuForm:{
+         allnodes:[],
+         selectednodes:[]
+       },
+       defaultProps: {
+          children: 'children',
+          label: 'label'
+        }
     };
   },
   methods: {
@@ -209,9 +247,9 @@ export default {
           this.departmentoptions = res.Data;
 
           if (this.departmentoptions.length > 0) {
-            this.departmentid = this.departmentoptions[0].value
-            this.seldepartment=[this.departmentoptions[0].value]
-           this.getroles();
+            this.departmentid = this.departmentoptions[0].value;
+            this.seldepartment = [this.departmentoptions[0].value];
+            this.getroles();
           }
         } else {
           message({
@@ -220,15 +258,15 @@ export default {
           });
         }
       });
-    }, 
+    },
     //选择部门
     cascaderChange(val) {
-       this.departmentid =val[val.length-1]
-   
+      this.departmentid = val[val.length - 1];
+
       this.getroles();
     },
-    getstatetext(val){
-      return stateText(val)
+    getstatetext(val) {
+      return stateText(val);
     },
     handleCurrentChange(val) {
       this.page = val;
@@ -261,11 +299,9 @@ export default {
         type: "warning"
       })
         .then(() => {
-         
           this.NProgress.start();
           let para = { Id: row.Id };
           DeleteRoleByRoleId(para).then(res => {
-        
             this.NProgress.done();
             if (res.Code === 0) {
               this.$message({
@@ -273,7 +309,6 @@ export default {
                 type: "success"
               });
             } else {
-
               this.$message({
                 message: res.Errors.join("  "),
                 type: "error"
@@ -285,22 +320,53 @@ export default {
         })
         .catch(() => {});
     },
+    
+    //显示权限编辑界面
+    handleMenu: function(index, row) {
+        this.modifyRoleId= row.Id
+        let para = { roleId: row.Id,departmentId: this.departmentid};
+          GetMenuTreeForCurrentUserByDeparentId(para).then(res => {
+            this.NProgress.done();
+            if (res.Code === 0) {
+             this.menuForm.allnodes= res.Data.AllNodes
+             this.menuForm.selectednodes= res.Data.SelectedNodes
+    
+               this.menuFormVisible=true
+            } else {
+              this.$message({
+                message: res.Errors.join("  "),
+                type: "error"
+              });
+            }
+
+          }) .catch(() => {
+            this.$message({
+                message: '获取权限失败',
+                type: "error"
+              });
+
+
+          });;
+       
+    },
+
+
     //显示编辑界面
     handleEdit: function(index, row) {
-        this.statelt = statelist();
+      this.statelt = statelist();
       this.editFormVisible = true;
       this.editForm = Object.assign({}, row);
     },
     //显示新增界面
     handleAdd() {
-      this.statelt = statelist();    
+      this.statelt = statelist();
       this.addFormVisible = true;
       this.addForm = {
         id: 0,
         RoleName: "",
         Description: "",
         RsState: 1,
-        DepartmentId:this.departmentid
+        DepartmentId: this.departmentid
       };
     },
     //编辑
@@ -308,13 +374,11 @@ export default {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
-       
-             this.NProgress.start();
+            this.NProgress.start();
 
             let para = Object.assign({}, this.editForm);
             UpdateRole(para).then(res => {
-             
-               this.NProgress.done();
+              this.NProgress.done();
               if (res.Code === 0) {
                 this.editFormVisible = false;
                 this.$message({
@@ -324,7 +388,6 @@ export default {
                 this.$refs["editForm"].resetFields();
                 this.getroles();
               } else {
-              
                 this.$message({
                   message: res.Errors.join("  "),
                   type: "error"
@@ -373,11 +436,37 @@ export default {
     },
     selsChange: function(sels) {
       this.sels = sels;
+    },
+    //编辑权限
+    menusubmit:function(){
+            this.$confirm("确认提交吗？", "提示", {}).then(() => {
+            this.NProgress.start();
+            let selcheckedIds=this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
+            let para = {RoleId:this.modifyRoleId,MenuIds:selcheckedIds}
+            ModifyMentForRole(para).then(res => {
+              this.NProgress.done();
+              if (res.Code === 0) {
+                this.menuFormVisible = false;
+                this.$message({
+                  message: "操作成功",
+                  type: "success"
+                });
+             
+              } else {
+                this.$message({
+                  message: res.Errors.join("  "),
+                  type: "error"
+                });
+              }
+            });
+          });
+
+
+
     }
   },
   mounted() {
-  
-    this.getdepartmentlist();
+     this.getdepartmentlist();
   }
 };
 </script>

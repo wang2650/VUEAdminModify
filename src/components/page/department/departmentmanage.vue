@@ -36,13 +36,13 @@
     >
       <el-table-column type="selection" width="50"></el-table-column>
       <el-table-column type="index" width="80"></el-table-column>
-        <el-table-column prop="Id" label="部门Id" width sortable></el-table-column>
-      <el-table-column prop="DepartmentName" label="部门名" width sortable></el-table-column>
-      <el-table-column prop="Description" label="说明" width sortable></el-table-column>
-      <el-table-column prop="AddDateTime" label="创建时间" :formatter="formatCreateTime" width sortable></el-table-column>
+        <el-table-column prop="Id" label="部门Id" width="80"></el-table-column>
+      <el-table-column prop="DepartmentName" label="部门名" width="150"></el-table-column>
+      <el-table-column prop="Description" label="说明" width="150"></el-table-column>
+      <el-table-column prop="AddDateTime" label="创建时间" :formatter="formatCreateTime" width="150" ></el-table-column>
       <!--<el-table-column prop="CreateBy" label="创建者" width="" sortable>-->
       <!--</el-table-column>-->
-      <el-table-column prop="RsState" label="状态" width="200" sortable>
+      <el-table-column prop="RsState" label="状态" width="100" sortable>
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.RsState===1  ? 'success' : 'danger'"
@@ -50,8 +50,9 @@
           >{{ getstatetext(scope.row.RsState)}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" >
         <template scope="scope">
+             <el-button size="small" @click="diaplaySetUpUser(scope.$index, scope.row)">设置员工</el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -130,13 +131,76 @@
         <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
       </div>
     </el-dialog>
+
+
+
+    <!--设置员工界面-->
+    <el-dialog
+      title="编辑"
+      :visible.sync="userdialogVisible"
+      v-model="userdialogVisible"
+      :close-on-click-modal="false"
+    >
+       <el-form :inline="true" :model="userForm" @submit.native.prevent>
+        <el-form-item>
+          <el-input v-model="userForm.name" placeholder="用户名"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="getuserlist">查询</el-button>
+        </el-form-item>
+      </el-form>
+  <!--列表-->
+    <el-table
+      :data="userlist"
+      highlight-current-row
+      style="width: 100%;"
+      @selection-change="handleMulUser"
+    >
+      <el-table-column type="selection" width="50"></el-table-column>
+      <el-table-column type="index" width="80"></el-table-column>
+        <el-table-column prop="ID" label="用户Id" width sortable></el-table-column>
+      <el-table-column prop="UserName" label="用户名" width sortable></el-table-column>
+      <el-table-column prop="NickName" label="昵称" width sortable></el-table-column>
+
+      <el-table-column prop="DepartmentId" label="是否在部门内" width="200" sortable>
+        <template slot-scope="scope">
+        {{ scope.row.DepartmentId===0  ? '否' : '是'}}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150">
+        <template scope="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">加入</el-button>
+          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">移除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+      <div style="margin-top: 20px">
+    <el-button size="small" @click="getuserlist">批量添加</el-button>
+    <el-button type="danger" @click="getuserlist">批量删除</el-button>
+  </div>
+    <!--工具条-->
+    <el-col :span="24" class="toolbar">
+      <el-pagination
+        layout="prev, pager, next"
+        @current-change="handleUserListChange"
+        :page-size="pagesize"
+        :total="userlisttotal"
+        style="float:right;"
+      ></el-pagination>
+    </el-col>
+
+    </el-dialog>
+
+
   </section>
 </template>
 
 <script>
 import moment from "moment";
-import { GetDepartmentListForCurrentUser,InsertDepartment,UpdateDepartment,DeleteDepartmentByDepartmentId,GetDepartmentList } from "@/api/department";
+import { GetDepartmentListForCurrentUser,InsertDepartment,UpdateDepartment,DeleteDepartmentByDepartmentId,GetDepartmentList,AddUserForDepartment,DeleteUserForDepartment } from "@/api/department";
 import { statelist,stateText } from "@/api/commonfun";
+import { GetUsersRefDepartment} from "@/api/user";
+
 
 export default {
   data() {
@@ -150,7 +214,7 @@ export default {
       departmentid: -1,
       total: 0,
       page: 1,
-      pagesize: 10,
+      pagesize: 5,
       listLoading: false,
       sels: [], //列表选中列
 
@@ -180,7 +244,15 @@ export default {
         Description: "",
         RsState: '',
         DepartmentId:-1
-      }
+      },
+      userdialogVisible:false,
+      userForm:{
+        name:"",
+        departmentId:0
+      },
+      mulselectedusers:[],
+      userlist:[],
+      userlisttotal:0,
     };
   },
   methods: {
@@ -255,7 +327,7 @@ export default {
           let para = { DepartmentId: row.Id };
         
           DeleteDepartmentByDepartmentId(para).then(res => {
-                  console.info(3333333333333)
+        
             this.NProgress.done();
             if (res.Code === 0) {
               this.$message({
@@ -362,6 +434,46 @@ export default {
     },
     selsChange: function(sels) {
       this.sels = sels;
+    },
+    diaplaySetUpUser: function(index, row) {
+      this.userdialogVisible = true;
+      this.userForm.departmentId=row.Id
+      this.userForm.name=''
+      this.getuserlist()
+    },
+    handleUserListChange:function(val){
+        this.page = val;
+      this.getuserlist();
+    }
+    ,
+    //多选用户
+    handleMulUser:function(val){
+
+     this.mulselectedusers=val
+    },
+    getuserlist:function(){
+     
+      let para = {
+        Page: { PageIndex: this.page, PageSize: this.pagesize },
+        Name:this.userForm.name,
+        departmentId:this.userForm.departmentId
+
+      };
+        GetUsersRefDepartment(para).then(res => {
+        if (res.Code === 0) {
+          this.userlist = res.Data.Result;
+          this.userlisttotal=res.Data.Total
+       
+        } else {
+          message({
+            message: "获取部门失败",
+            type: "warning"
+          });
+        }
+      });
+
+
+
     }
   },
   mounted() {

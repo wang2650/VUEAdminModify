@@ -50,3 +50,13 @@
       data:dataValue,
     })
   }
+  //获取用户集合，包含部门id
+  export function GetUsersRefDepartment(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/GetUsersRefDepartment',
+      method: 'post',
+      data:dataValue,
+    })
+  }
+
+  
