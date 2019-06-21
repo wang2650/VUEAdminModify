@@ -24,7 +24,9 @@ const utils = {
 
     return _result.length ? prefix + _result.join('&') : ''
   },
-
+  Enumerable(){
+    return  require('linq');
+  }
   // ....其他函数....
 
 }

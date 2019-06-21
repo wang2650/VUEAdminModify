@@ -76,9 +76,9 @@ export function AddUserForDepartment(dataValue) {
     })
   }
   //移除部门中用户
-  export function DeleteUserForDepartment(dataValue) {
+  export function RemoveUserForDepartment(dataValue) {
     return service({
-      url: '/Api/SystemManage/Department/DeleteUserForDepartment',
+      url: '/Api/SystemManage/Department/RemoveUserForDepartment',
       method: 'post',
       data:dataValue
     })
