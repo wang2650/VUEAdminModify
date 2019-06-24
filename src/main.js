@@ -18,6 +18,7 @@ import './assets/css/icon.css';
 import './components/common/directives';
 import "babel-polyfill";
 Vue.config.productionTip = false
+console.log('process:'+process.env.VUE_APP_URL)
 Vue.use(VueI18n);
 Vue.use(ElementUI, {
     size: 'small'
@@ -30,6 +31,7 @@ const i18n = new VueI18n({
 })
 
 import { GetUrlRightForCurrentUser } from "@/api/menu";
+
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     NProgress.start()
