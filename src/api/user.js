@@ -58,5 +58,11 @@
       data:dataValue,
     })
   }
-
+  export function GetUsersRefRole(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/GetUsersRefRole',
+      method: 'post',
+      data:dataValue,
+    })
+  }
   

@@ -35,3 +35,20 @@ import utils from '@/api/utils'
      data:dataValue,
    })
  }
+
+ export function RemoveUserFromRole(dataValue) {
+  return service({
+    url: '/api/SystemManage/Role/RemoveUserFromRole',
+    method: 'post',
+    data:dataValue,
+  })
+}
+
+export function AddUserForRole(dataValue) {
+  return service({
+    url: '/api/SystemManage/Role/AddUserForRole',
+    method: 'post',
+    data:dataValue,
+  })
+}
+ 

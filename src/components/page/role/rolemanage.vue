@@ -53,6 +53,7 @@
       <el-table-column label="操作" >
         <template scope="scope">
           <el-button size="small" @click="handleMenu(scope.$index, scope.row)">设置权限</el-button>
+           <el-button size="small" @click="diaplaySetUpUser(scope.$index, scope.row)">设置员工</el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -132,6 +133,70 @@
       </div>
     </el-dialog>
 
+
+ <!--设置员工界面-->
+    <el-dialog
+      title="编辑"
+      :visible.sync="userdialogVisible"
+      v-model="userdialogVisible"
+      :close-on-click-modal="false"
+    >
+      <el-form :inline="true" :model="userForm" @submit.native.prevent>
+        <el-form-item>
+          <el-input v-model="userForm.name" placeholder="用户名"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="getuserlist">查询</el-button>
+        </el-form-item>
+      </el-form>
+      <!--列表-->
+      <el-table
+        :data="userlist"
+        highlight-current-row
+        style="width: 100%;"
+        @selection-change="handleMulUser"
+      >
+        <el-table-column type="selection" width="50"></el-table-column>
+        <el-table-column type="index" width="80"></el-table-column>
+        <el-table-column prop="ID" label="用户Id" width sortable></el-table-column>
+        <el-table-column prop="UserName" label="用户名" width sortable></el-table-column>
+        <el-table-column prop="NickName" label="昵称" width sortable></el-table-column>
+
+        <el-table-column prop="DepartmentId" label="是否在角色内" width="200" sortable>
+          <template slot-scope="scope">{{ scope.row.RoleId===0 ? '否' : '是'}}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="150">
+          <template scope="scope">
+            <el-button size="small" @click="addOneUserToDepartment(scope.$index, scope.row)">加入</el-button>
+            <el-button
+              type="danger"
+              size="small"
+              @click="romveOneUserToDepartment(scope.$index, scope.row)"
+            >移除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="margin-top: 20px">
+        <el-button size="small" @click="batchAddOneUserToDepartment">批量添加</el-button>
+        <el-button type="danger" @click="batchRemoveOneUserToDepartment">批量删除</el-button>
+      </div>
+      <!--工具条-->
+      <el-col :span="24" class="toolbar">
+        <el-pagination
+          layout="prev, pager, next"
+          @current-change="handleUserListChange"
+          :page-size="pagesize"
+          :total="userlisttotal"
+          style="float:right;"
+        ></el-pagination>
+      </el-col>
+    </el-dialog>
+
+
+
+
+
+
     <!--权限设置界面-->
     <el-dialog
       title="设置权限"
@@ -171,6 +236,8 @@ import {
 import { GetDepartmentAndSubDepartmentForCurrentUser } from "@/api/department";
 import { statelist, stateText } from "@/api/commonfun";
 import { GetMenuTreeForCurrentUserByDeparentId ,ModifyMentForRole} from "@/api/menu";
+import { GetUsersRefRole } from "@/api/user";
+import { RemoveUserFromRole,AddUserForRole } from "@/api/role";
 export default {
   data() {
     return {
@@ -224,7 +291,14 @@ export default {
        defaultProps: {
           children: 'children',
           label: 'label'
-        }
+        },
+        userdialogVisible:false,
+        userForm: {
+        name: "",
+        RoleId: 0
+      },
+      userlisttotal:0
+
     };
   },
   methods: {
@@ -463,7 +537,42 @@ export default {
 
 
 
-    }
+    },
+    getuserlist: function() {
+      let para = {
+        Page: { PageIndex: this.page, PageSize: this.pagesize },
+        Name: this.userForm.name,
+        RoleId: this.userForm.RoleId
+      };
+      GetUsersRefRole(para).then(res => {
+        if (res.Code === 0) {
+          this.userlist = res.Data.Result;
+          this.userlisttotal = res.Data.Total;
+        } else {
+          message({
+            message: "获取部门失败",
+            type: "warning"
+          });
+        }
+      });
+    },
+   //多选用户
+    handleMulUser: function(val) {
+      this.mulselectedusers = val;
+    },
+    //用户表分页
+  handleUserListChange: function(val) {
+      this.page = val;
+      this.getuserlist();
+    },
+    diaplaySetUpUser: function(index, row) {
+      this.userdialogVisible = true;
+      this.userForm.RoleId = row.Id;
+      this.userForm.name = "";
+      this.getuserlist();
+    },
+       //批量用户添加带处理
+
   },
   mounted() {
      this.getdepartmentlist();
