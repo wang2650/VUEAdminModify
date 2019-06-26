@@ -176,7 +176,7 @@
       </el-table>
       <div style="margin-top: 20px">
         <el-button size="small" @click="batchAddOneUserToDepartment">批量添加</el-button>
-        <el-button type="danger" @click="batchRemoveOneUserToDepartment">批量删除</el-button>
+        <el-button type="danger" @click="batchRemoveOneUserToDepartment">批量移除</el-button>
       </div>
       <!--工具条-->
       <el-col :span="24" class="toolbar">

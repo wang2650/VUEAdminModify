@@ -36,10 +36,10 @@
     >
       <el-table-column type="selection" width="50"></el-table-column>
       <el-table-column type="index" width="80"></el-table-column>
-      <el-table-column prop="Id" label="角色Id" width="80" ></el-table-column>
-      <el-table-column prop="RoleName" label="角色名" width="150" ></el-table-column>
+      <el-table-column prop="Id" label="角色Id" width="80"></el-table-column>
+      <el-table-column prop="RoleName" label="角色名" width="150"></el-table-column>
       <el-table-column prop="Description" label="说明" width="150"></el-table-column>
-      <el-table-column prop="AddDateTime" label="创建时间" width="120" :formatter="formatCreateTime" ></el-table-column>
+      <el-table-column prop="AddDateTime" label="创建时间" width="120" :formatter="formatCreateTime"></el-table-column>
       <!--<el-table-column prop="CreateBy" label="创建者" width="" sortable>-->
       <!--</el-table-column>-->
       <el-table-column prop="RsState" label="状态" width="100" sortable>
@@ -50,10 +50,10 @@
           >{{ getstatetext(scope.row.RsState)}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" >
+      <el-table-column label="操作">
         <template scope="scope">
           <el-button size="small" @click="handleMenu(scope.$index, scope.row)">设置权限</el-button>
-           <el-button size="small" @click="diaplaySetUpUser(scope.$index, scope.row)">设置员工</el-button>
+          <el-button size="small" @click="diaplaySetUpUser(scope.$index, scope.row)">设置员工</el-button>
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -133,8 +133,7 @@
       </div>
     </el-dialog>
 
-
- <!--设置员工界面-->
+    <!--设置员工界面-->
     <el-dialog
       title="编辑"
       :visible.sync="userdialogVisible"
@@ -167,18 +166,18 @@
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template scope="scope">
-            <el-button size="small" @click="addOneUserToDepartment(scope.$index, scope.row)">加入</el-button>
+            <el-button size="small" @click="addOneUserToRole(scope.$index, scope.row)">加入</el-button>
             <el-button
               type="danger"
               size="small"
-              @click="romveOneUserToDepartment(scope.$index, scope.row)"
+              @click="romveOneUserToRole(scope.$index, scope.row)"
             >移除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div style="margin-top: 20px">
-        <el-button size="small" @click="batchAddOneUserToDepartment">批量添加</el-button>
-        <el-button type="danger" @click="batchRemoveOneUserToDepartment">批量删除</el-button>
+        <el-button size="small" @click="batchAddOneUserToRole">批量添加</el-button>
+        <el-button type="danger" @click="batchRemoveOneUserToRole">批量移除</el-button>
       </div>
       <!--工具条-->
       <el-col :span="24" class="toolbar">
@@ -192,11 +191,6 @@
       </el-col>
     </el-dialog>
 
-
-
-
-
-
     <!--权限设置界面-->
     <el-dialog
       title="设置权限"
@@ -204,17 +198,17 @@
       v-model="menuFormVisible"
       :close-on-click-modal="false"
     >
-      <el-form :model="menuForm" label-width="80px"  ref="menuForm">
+      <el-form :model="menuForm" label-width="80px" ref="menuForm">
         <el-form-item label="权限">
-<el-tree
-  :data="menuForm.allnodes"
-  show-checkbox
-  node-key="id"
-  ref="tree"
-  default-expand-all
-  :default-checked-keys="menuForm.selectednodes"
-  :props="defaultProps">
-</el-tree>
+          <el-tree
+            :data="menuForm.allnodes"
+            show-checkbox
+            node-key="id"
+            ref="tree"
+            default-expand-all
+            :default-checked-keys="menuForm.selectednodes"
+            :props="defaultProps"
+          ></el-tree>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -235,9 +229,12 @@ import {
 } from "@/api/role";
 import { GetDepartmentAndSubDepartmentForCurrentUser } from "@/api/department";
 import { statelist, stateText } from "@/api/commonfun";
-import { GetMenuTreeForCurrentUserByDeparentId ,ModifyMentForRole} from "@/api/menu";
+import {
+  GetMenuTreeForCurrentUserByDeparentId,
+  ModifyMentForRole
+} from "@/api/menu";
 import { GetUsersRefRole } from "@/api/user";
-import { RemoveUserFromRole,AddUserForRole } from "@/api/role";
+import { RemoveUserFromRole, AddUserForRole } from "@/api/role";
 export default {
   data() {
     return {
@@ -281,24 +278,24 @@ export default {
         RsState: "",
         DepartmentId: -1
       },
-      modifyRoleId:0,
-      menuLoading:false,
-       menuFormVisible:false, //权限对话框
-       menuForm:{
-         allnodes:[],
-         selectednodes:[]
-       },
-       defaultProps: {
-          children: 'children',
-          label: 'label'
-        },
-        userdialogVisible:false,
-        userForm: {
+      modifyRoleId: 0,
+      menuLoading: false,
+      menuFormVisible: false, //权限对话框
+      menuForm: {
+        allnodes: [],
+        selectednodes: []
+      },
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      userdialogVisible: false,
+      userForm: {
         name: "",
         RoleId: 0
       },
-      userlisttotal:0
-
+      mulselectedusers: [],
+      userlisttotal: 0
     };
   },
   methods: {
@@ -394,36 +391,33 @@ export default {
         })
         .catch(() => {});
     },
-    
+
     //显示权限编辑界面
     handleMenu: function(index, row) {
-        this.modifyRoleId= row.Id
-        let para = { roleId: row.Id,departmentId: this.departmentid};
-          GetMenuTreeForCurrentUserByDeparentId(para).then(res => {
-            this.NProgress.done();
-            if (res.Code === 0) {
-             this.menuForm.allnodes= res.Data.AllNodes
-             this.menuForm.selectednodes= res.Data.SelectedNodes
-    
-               this.menuFormVisible=true
-            } else {
-              this.$message({
-                message: res.Errors.join("  "),
-                type: "error"
-              });
-            }
+      this.modifyRoleId = row.Id;
+      let para = { roleId: row.Id, departmentId: this.departmentid };
+      GetMenuTreeForCurrentUserByDeparentId(para)
+        .then(res => {
+          this.NProgress.done();
+          if (res.Code === 0) {
+            this.menuForm.allnodes = res.Data.AllNodes;
+            this.menuForm.selectednodes = res.Data.SelectedNodes;
 
-          }) .catch(() => {
+            this.menuFormVisible = true;
+          } else {
             this.$message({
-                message: '获取权限失败',
-                type: "error"
-              });
-
-
-          });;
-       
+              message: res.Errors.join("  "),
+              type: "error"
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            message: "获取权限失败",
+            type: "error"
+          });
+        });
     },
-
 
     //显示编辑界面
     handleEdit: function(index, row) {
@@ -512,31 +506,29 @@ export default {
       this.sels = sels;
     },
     //编辑权限
-    menusubmit:function(){
-            this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            this.NProgress.start();
-            let selcheckedIds=this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
-            let para = {RoleId:this.modifyRoleId,MenuIds:selcheckedIds}
-            ModifyMentForRole(para).then(res => {
-              this.NProgress.done();
-              if (res.Code === 0) {
-                this.menuFormVisible = false;
-                this.$message({
-                  message: "操作成功",
-                  type: "success"
-                });
-             
-              } else {
-                this.$message({
-                  message: res.Errors.join("  "),
-                  type: "error"
-                });
-              }
+    menusubmit: function() {
+      this.$confirm("确认提交吗？", "提示", {}).then(() => {
+        this.NProgress.start();
+        let selcheckedIds = this.$refs.tree
+          .getCheckedKeys()
+          .concat(this.$refs.tree.getHalfCheckedKeys());
+        let para = { RoleId: this.modifyRoleId, MenuIds: selcheckedIds };
+        ModifyMentForRole(para).then(res => {
+          this.NProgress.done();
+          if (res.Code === 0) {
+            this.menuFormVisible = false;
+            this.$message({
+              message: "操作成功",
+              type: "success"
             });
-          });
-
-
-
+          } else {
+            this.$message({
+              message: res.Errors.join("  "),
+              type: "error"
+            });
+          }
+        });
+      });
     },
     getuserlist: function() {
       let para = {
@@ -556,12 +548,14 @@ export default {
         }
       });
     },
-   //多选用户
+    //多选用户
     handleMulUser: function(val) {
       this.mulselectedusers = val;
     },
+
+
     //用户表分页
-  handleUserListChange: function(val) {
+    handleUserListChange: function(val) {
       this.page = val;
       this.getuserlist();
     },
@@ -571,11 +565,105 @@ export default {
       this.userForm.name = "";
       this.getuserlist();
     },
-       //批量用户添加带处理
+    //批量用户添加带处理
+    addUserToRole: function(val) {
+      this.$confirm("确认添加该用户吗?", "提示", {
+        type: "warning"
+      })
+        .then(() => {
+          this.NProgress.start();
 
+          let para = { UserIds: val, RoleId: this.userForm.RoleId };
+
+          AddUserForRole(para).then(res => {
+            this.NProgress.done();
+            if (res.Code === 0) {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+            } else {
+              this.$message({
+                message: res.Errors.join("  "),
+                type: "error"
+              });
+            }
+
+            this.getuserlist();
+          });
+        })
+        .catch(() => {});
+    },
+    removeUserFromRole: function(val) {
+      this.$confirm("确认移除该用户吗?", "提示", {
+        type: "warning"
+      })
+        .then(() => {
+          this.NProgress.start();
+             let para = { UserIds: val, RoleId: this.userForm.RoleId };
+
+          RemoveUserFromRole(para).then(res => {
+            this.NProgress.done();
+            if (res.Code === 0) {
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            } else {
+              this.$message({
+                message: res.Errors.join("  "),
+                type: "error"
+              });
+            }
+
+            this.getuserlist();
+          });
+        })
+        .catch(() => {});
+    },
+    romveOneUserToRole: function(index, row) {
+      let userids = [row.ID];
+      this.removeUserFromRole(userids);
+    },
+    addOneUserToRole: function(index, row) {
+      let userids = [row.ID];
+      this.addUserToRole(userids);
+    },
+    //批量移出角色中的用户
+    batchRemoveOneUserToRole: function() {
+      if (this.mulselectedusers == null || this.mulselectedusers.length === 0) {
+        this.$message({
+          message: "请先选择用户",
+          type: "warn"
+        });
+      } else {
+        let Enumerable = require("linq");
+        let userids = Enumerable.from(this.mulselectedusers)
+          .select(x => x.ID)
+          .toArray();
+        this.mulselectedusers=[];
+        this.romveOneUserToRole(userids);
+      }
+    },
+    // 批量添加用户到角色
+    batchAddOneUserToRole: function() {
+      if (this.mulselectedusers == null || this.mulselectedusers.length === 0) {
+        this.$message({
+          message: "请先选择用户",
+          type: "warn"
+        });
+      } else {
+        let Enumerable = require("linq");
+        let userids = Enumerable.from(this.mulselectedusers)
+          .select(x => x.ID)
+          .toArray();
+        this.mulselectedusers=[];
+        this.addUserToRole(userids);
+      }
+    }
   },
   mounted() {
-     this.getdepartmentlist();
+    this.getdepartmentlist();
   }
 };
 </script>
