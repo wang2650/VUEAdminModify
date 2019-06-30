@@ -294,6 +294,7 @@ export default {
         name: "",
         RoleId: 0
       },
+      userlist:[],
       mulselectedusers: [],
       userlisttotal: 0
     };
@@ -542,7 +543,7 @@ export default {
           this.userlisttotal = res.Data.Total;
         } else {
           message({
-            message: "获取部门失败",
+            message: "获取角色中用户失败",
             type: "warning"
           });
         }

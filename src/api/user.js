@@ -9,6 +9,38 @@
       headers:{"aaaaaaa":"bb"}
     })
   }
+  // 修改密码
+  export function ModifyUserPassord(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/ModifyUserPassord',
+      method: 'post',
+      data:dataValue,
+    })
+  }
+//重置密码
+  export function ResetPassord(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/ResetPassord',
+      method: 'post',
+      data:dataValue,
+    })
+  }
+//刷新token
+  export function RefreshToken(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/RefreshToken',
+      method: 'post',
+      data:dataValue,
+    })
+  }
+//获取当前用户的基本信息
+export function GetCurrentUserInfo(dataValue) {
+  return service({
+    url: '/api/SystemManage/User/GetCurrentUserInfo',
+    method: 'post',
+    data:dataValue,
+  })
+}
   //获取用户列表
   export function GetUserList(dataValue) {
     return service({
@@ -58,6 +90,7 @@
       data:dataValue,
     })
   }
+  //获取用户与该角色的关系列表
   export function GetUsersRefRole(dataValue) {
     return service({
       url: '/api/SystemManage/User/GetUsersRefRole',
