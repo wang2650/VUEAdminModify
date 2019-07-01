@@ -1,4 +1,5 @@
 ﻿<template>
+
   <div class="sidebar">
     <el-menu
       class="sidebar-el-menu"
@@ -9,16 +10,17 @@
       active-text-color="#20a0ff"
       unique-opened
       router
+      @select="handleSelect"
     >
       <template v-for="item in items">
-        <template v-if="item.subs">
+        <template v-if="item.subs&&item.subs.length>0">
           <el-submenu :index="item.index" :key="item.index">
             <template slot="title">
               <i :class="item.icon"></i>
               <span slot="title">{{ item.title }}</span>
             </template>
             <template v-for="subItem in item.subs">
-              <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+              <el-submenu v-if="subItem.subs && subItem.subs.length>0" :index="subItem.index" :key="subItem.index">
                 <template slot="title">{{ subItem.title }}</template>
                 <el-menu-item
                   v-for="(threeItem,i) in subItem.subs"
@@ -148,7 +150,10 @@ export default {
        SetMenu(){
          this.items = JSON.parse(storage.getValue('sidebarMenu'))
    
-       }
+       },
+       handleSelect(key, keyPath) {
+        console.log(key, keyPath);
+      }
   },
   computed: {
     onRoutes() {

@@ -20,6 +20,11 @@ export default new Router({
                     meta: { title: '用户管理' }
                 },
                 {
+                    path: '/myselfinfo',
+                    component: resolve => require(['../components/page/user/myselfinfo.vue'], resolve),
+                    meta: { title: '个人信息' }
+                },
+                {
                     path: '/rolemanage',
                     component: resolve => require(['../components/page/role/rolemanage.vue'], resolve),
                     meta: { title: '角色管理' }
