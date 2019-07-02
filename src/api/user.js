@@ -34,11 +34,10 @@
     })
   }
 //获取当前用户的基本信息
-export function GetCurrentUserInfo(dataValue) {
+export function GetCurrentUserInfo() {
   return service({
     url: '/api/SystemManage/User/GetCurrentUserInfo',
-    method: 'post',
-    data:dataValue,
+    method: 'get'
   })
 }
   //获取用户列表
@@ -74,6 +73,15 @@ export function GetCurrentUserInfo(dataValue) {
       data:dataValue
     })
   }
+  //修改自己的信息
+  export function UpdateMyselfInfo(dataValue) {
+    return service({
+      url: '/api/SystemManage/User/UpdateMyselfInfo',
+      method: 'post',
+      data:dataValue,
+    })
+  }
+  
   //修改
   export function UpdateUsers(dataValue) {
     return service({
