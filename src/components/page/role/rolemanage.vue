@@ -292,7 +292,7 @@ export default {
     selsChange: function(sels) {
       this.sels = sels;
     },
-
+ },
   mounted() {
     this.getroles();
   }
