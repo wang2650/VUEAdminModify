@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -23,7 +24,7 @@ module.exports = {
           warnings: false,
           errors: true
         },
-        proxy:'http://localhost:5000/'
+        proxy:process.env.WEB_API_URL
         
     },
     configureWebpack: {

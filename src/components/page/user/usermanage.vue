@@ -30,6 +30,9 @@
       <el-table-column prop="UserName" label="登录名" width sortable></el-table-column>
       <el-table-column label="操作" width="150">
         <template scope="scope">
+
+          <el-button size="small" @click="resetpassword(scope.$index, scope.row)">重置密码</el-button>
+          
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -111,7 +114,8 @@ import {
   InsertUser,
   DeleteUser,
   BatchRemoveUser,
-  UpdateUsers
+  UpdateUsers,
+  ResetPassord
 } from "@/api/user";
 export default {
   data() {
@@ -323,6 +327,30 @@ export default {
           });
         })
         .catch(() => {});
+    },
+    //重置密码
+    resetpassword:function(index, row){
+       this.$refs.editForm.validate(valid => {
+        if (valid) {
+          this.$confirm("确认提交吗？", "提示", {}).then(() => {
+            let para = {UserId:row.ID}
+            ResetPassord(para).then(res => {
+              if (res.Code === 0) {
+                //NProgress.done();
+                this.$message({
+                  message: "操作成功",
+                  type: "success"
+                });
+              } else {
+                this.$message({
+                  message: res.Errors.join("  "),
+                  type: "error"
+                });
+              }
+            });
+          });
+        }
+      });
     }
   },
   mounted() {
