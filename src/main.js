@@ -6,6 +6,7 @@ import storage from "@/api/storage";
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
 import axios from 'axios';
+import unReport from '@/api/unReport'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.prototype.$axios = axios;
@@ -18,7 +19,7 @@ import './assets/css/icon.css';
 import './components/common/directives';
 import "babel-polyfill";
 Vue.config.productionTip = false
-console.log('process:'+process.env.VUE_APP_URL)
+console.log('process:' + process.env.VUE_APP_URL)
 Vue.use(VueI18n);
 Vue.use(ElementUI, {
     size: 'small'
@@ -29,19 +30,19 @@ const i18n = new VueI18n({
     locale: 'zh',
     messages
 })
-
+unReport.init();
 import { GetUrlRightForCurrentUser } from "@/api/menu";
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     NProgress.start()
     // document.title = to.meta.title;
-    const whileList=['/login','/help','contact']
+    const whileList = ['/login', '/help', 'contact']
 
-    const token =  storage.getValue("token");
+    const token = storage.getValue("token");
 
-    if (whileList.indexOf(to.path)>=0) {
- 
+    if (whileList.indexOf(to.path) >= 0) {
+
         next();
     }
     else if (!token) {
@@ -55,8 +56,8 @@ router.beforeEach((to, from, next) => {
                 confirmButtonText: '确定'
             });
         } else {
-    
-             let canVisitroute=[]
+
+            let canVisitroute = []
             // if ( storage.getValue('canVisitroute')) {
             //     canVisitroute = JSON.parse(storage.getValue('canVisitroute'));
             //   } else {
@@ -72,23 +73,23 @@ router.beforeEach((to, from, next) => {
             //       });
             //   }
 
-               if(canVisitroute.indexOf(to.path)>=0){
+            if (canVisitroute.indexOf(to.path) >= 0) {
                 next();
-               }else{
+            } else {
                 next();
                 //Message.error('没有该地址权限');
-               }
+            }
 
 
-           
 
-            
+
+
         }
     }
 })
 router.afterEach(() => {
     NProgress.done()
-  })
+})
 
 new Vue({
     router,

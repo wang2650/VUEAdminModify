@@ -2,10 +2,11 @@ import axios from 'axios';
 import { Message } from 'element-ui';
 import storage from '@/api/storage';
 import qs from 'qs'
+axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.baseUrl, // url = base url + request url
-  withCredentials: true, // send cookies when cross-domain requests
+  baseURL: 'http://localhost:5000/', // url = base url + request url
+  withCredentials: false, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 });
 
@@ -14,7 +15,10 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     if (config.method === "post") {
+
       config.data = qs.stringify(config.data);
+
+
     }
     if (storage.getValue('token')) {
       // let each request carry token
@@ -44,6 +48,7 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
+    console.info("info:" + response.data);
     const res = response.data;
     // if the custom code is not 20000, it is judged as an error.
     if (res.Code != 0) {
@@ -53,28 +58,13 @@ service.interceptors.response.use(
         duration: 5 * 1000
       });
 
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-      //   // to re-login
-      //   MessageBox.confirm('你要退出吗，之后要重新登录', '确认退出', {
-      //     confirmButtonText: '重新登录',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     localStorage.clear()
-      //     this.$router.push('/login');
-      //       location.reload()
-
-      //   })
-      // }
-
       return Promise.reject(res.Errors.join('<br />') || '错误');
     } else {
       return res;
     }
   },
   error => {
-    let errormessage = error.message;
+    let errormessage = "ppp:" + error + error.message;
     if (error.response) {
       switch (error.response.status) {
         case 400:

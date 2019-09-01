@@ -25,14 +25,14 @@
     >
       <el-table-column type="selection" width="50"></el-table-column>
       <el-table-column type="index" width="80"></el-table-column>
-      <el-table-column prop="ID" width="80" label="用户ID"></el-table-column>
-      <el-table-column prop="NickName" label="昵称" width sortable></el-table-column>
-      <el-table-column prop="UserName" label="登录名" width sortable></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column prop="UsersId" width="80" label="用户ID"></el-table-column>
+      <el-table-column prop="NickName" label="昵称" width="150" sortable></el-table-column>
+      <el-table-column prop="UserName" label="登录名" width="150" sortable></el-table-column>
+      <el-table-column prop="HeadImage" label="头像" width="150" sortable></el-table-column>
+      <el-table-column label="操作" width="250">
         <template scope="scope">
-
           <el-button size="small" @click="resetpassword(scope.$index, scope.row)">重置密码</el-button>
-          
+
           <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -52,12 +52,7 @@
     </el-col>
 
     <!--编辑界面-->
-    <el-dialog
-      title="编辑"
-      :visible.sync="editFormVisible"
-      v-model="editFormVisible"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
       <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
         <el-form-item label="昵称" prop="NickName">
           <el-input v-model="editForm.NickName" auto-complete="off"></el-input>
@@ -75,17 +70,12 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="editFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+        <el-button type="primary" @click.native="editSubmit">提交</el-button>
       </div>
     </el-dialog>
 
     <!--新增界面-->
-    <el-dialog
-      title="新增"
-      :visible.sync="addFormVisible"
-      v-model="addFormVisible"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
       <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm" size="mini">
         <el-form-item label="昵称" prop="NickName">
           <el-input v-model="addForm.NickName" auto-complete="off" class="width200"></el-input>
@@ -117,6 +107,8 @@ import {
   UpdateUsers,
   ResetPassord
 } from "@/api/user";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 export default {
   data() {
     return {
@@ -141,10 +133,11 @@ export default {
       },
       //编辑界面数据
       editForm: {
-        id: 0,
+        UsersId: 0,
         UserName: "",
         NickName: "",
         PassWord: "",
+        HeadImage: "",
         Introduction: ""
       },
 
@@ -199,7 +192,7 @@ export default {
         .then(() => {
           this.listLoading = true;
           //NProgress.start();
-          let para = { userId: row.ID };
+          let para = { userId: row.UsersId };
           DeleteUser(para).then(res => {
             this.listLoading = false;
             //NProgress.done();
@@ -223,7 +216,12 @@ export default {
     //显示编辑界面
     handleEdit: function(index, row) {
       this.editFormVisible = true;
-      this.editForm = Object.assign({}, row);
+      this.editForm.UsersId = row.UsersId;
+      this.editForm.UserName = row.UserName;
+      this.editForm.NickName = row.NickName;
+      this.editForm.PassWord = row.PassWord;
+      this.editForm.HeadImage = row.HeadImage;
+      this.editForm.Introduction = row.Introduction;
     },
     //显示新增界面
     handleAdd() {
@@ -241,13 +239,13 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-            //NProgress.start();
-            let para = Object.assign({}, this.editForm);
 
+            let para = this.editForm;
+
+            para.HeadImage = "";
+            NProgress.start();
             UpdateUsers(para).then(res => {
-              this.editLoading = false;
               if (res.Code === 0) {
-                //NProgress.done();
                 this.$message({
                   message: "操作成功",
                   type: "success"
@@ -256,12 +254,12 @@ export default {
                 this.editFormVisible = false;
                 this.getUsers();
               } else {
-                  this.editLoading = false;
                 this.$message({
                   message: res.Errors.join("  "),
                   type: "error"
                 });
               }
+              NProgress.done();
             });
           });
         }
@@ -273,7 +271,7 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.addLoading = true;
-            //NProgress.start();
+            NProgress.start();
             let para = Object.assign({}, this.addForm);
             InsertUser(para)
               .then(res => {
@@ -295,8 +293,9 @@ export default {
               })
               .catch(error => {
                 this.addLoading = false;
-                console.log(error);
               });
+
+            NProgress.done();
           });
         } else {
           return false;
@@ -329,11 +328,11 @@ export default {
         .catch(() => {});
     },
     //重置密码
-    resetpassword:function(index, row){
-       this.$refs.editForm.validate(valid => {
+    resetpassword: function(index, row) {
+      this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            let para = {UserId:row.ID}
+            let para = { UserId: row.UsersId };
             ResetPassord(para).then(res => {
               if (res.Code === 0) {
                 //NProgress.done();
